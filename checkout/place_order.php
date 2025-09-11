@@ -1,0 +1,304 @@
+<?php
+include "../config/db.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// ✅ Check if user is logged in
+$user_id = $_SESSION['user_id'] ?? null;
+if (!$user_id) {
+    header("Location: ../users/login.php");
+    exit;
+}
+$errors = [];
+$success = null;
+$product_name = "Unknown Product";
+$order_details = [];
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // ✅ Collect & sanitize POST data
+    $product_id       = (int)($_POST['product_id'] ?? 0);
+    $fullname         = trim($_POST['fullname'] ?? '');
+    $email            = trim($_POST['email'] ?? '');
+    $phone            = trim($_POST['phone'] ?? '');
+    $address          = trim($_POST['address'] ?? '');
+    $quantity         = max(1, (int)($_POST['quantity'] ?? 1));
+    $price            = (float)($_POST['price'] ?? 0);
+    $payment_method   = trim($_POST['payment_method'] ?? 'COD');
+    $note             = trim($_POST['note'] ?? '');
+    $delivery_type    = trim($_POST['delivery_type'] ?? 'Standard');
+    $delivery_charges = (float)($_POST['delivery_charges'] ?? 250);
+    $selected_image   = trim($_POST['selected_image'] ?? '');
+    
+    // Fetch product name and image from product_images table
+    if ($product_id > 0) {
+        $stmt = $conn->prepare("SELECT p.name, pi.image 
+                               FROM products p 
+                               LEFT JOIN product_images pi ON p.id = pi.product_id 
+                               WHERE p.id = ?");
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $product_name = $row['name'];
+            // Use selected image if available, otherwise use product image
+            $selected_image = !empty($selected_image) ? $selected_image : ($row['image'] ?? '');
+        }
+        $stmt->close();
+    }
+    
+    // If no image is available, use placeholder
+    if (empty($selected_image)) {
+        $selected_image = 'placeholder.png';
+    }
+    
+    // Calculate totals
+    $subtotal = $price * $quantity;
+    $total_amount = $subtotal + $delivery_charges;
+    
+    // ✅ Validation
+    if ($fullname === '') $errors[] = "Full Name is required.";
+    if ($email === '') $errors[] = "Email is required.";
+    if ($phone === '') $errors[] = "Phone Number is required.";
+    if ($address === '') $errors[] = "Address is required.";
+    if ($payment_method === '') $errors[] = "Payment method is required.";
+    if ($delivery_type === '') $errors[] = "Delivery type is required.";
+    
+    // ✅ Process order if no errors
+    if (empty($errors)) {
+        if ($payment_method === "COD") {
+            $stmt = $conn->prepare("INSERT INTO orders 
+                (product_id, user_id, fullname, email, phone, address, quantity, price, payment_method, note, selected_image, delivery_type, delivery_charges) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            
+            // Bind params → types: i (int), s (string), d (double/float)
+            $stmt->bind_param(
+                "iissssisssssd",
+                $product_id,
+                $user_id,
+                $fullname,
+                $email,
+                $phone,
+                $address,
+                $quantity,
+                $price,
+                $payment_method,
+                $note,
+                $selected_image,
+                $delivery_type,
+                $delivery_charges
+            );
+            if ($stmt->execute()) {
+                $order_id = $stmt->insert_id;
+                $stmt->close();
+                
+                // ✅ Redirect to thank you page for COD orders
+                $_SESSION['order_success'] = true;
+                header("Location: thank_you.php");
+                exit;
+            } else {
+                $errors[] = "Failed to place order: " . $stmt->error;
+                $stmt->close();
+            }
+        } else {
+            // ✅ For online payments, redirect with session
+            $_SESSION['pending_order'] = [
+                'product_id'       => $product_id,
+                'user_id'          => $user_id,
+                'fullname'         => $fullname,
+                'email'            => $email,
+                'phone'            => $phone,
+                'address'          => $address,
+                'quantity'         => $quantity,
+                'price'            => $price,
+                'payment_method'   => $payment_method,
+                'note'             => $note,
+                'selected_image'   => $selected_image,
+                'delivery_type'    => $delivery_type,
+                'delivery_charges' => $delivery_charges,
+                'product_name'     => $product_name,
+                'subtotal'         => $subtotal,
+                'total_amount'     => $total_amount
+            ];
+            header("Location: transaction_form.php");
+            exit;
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slaymart - Order Processing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .processing-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        .processing-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .processing-header h1 {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 2rem;
+        }
+        .processing-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        .processing-body {
+            padding: 30px;
+        }
+        .processing-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .processing-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .processing-message {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .alert {
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: none;
+        }
+        .alert-danger {
+            background-color: #fff5f5;
+            color: #e53e3e;
+        }
+        .alert-danger ul {
+            margin: 0;
+            padding-left: 20px;
+            text-align: left;
+        }
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        .btn-outline-secondary {
+            background: white;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+        .btn-outline-secondary:hover {
+            background: #f8f9fa;
+            color: #495057;
+        }
+        .error-icon {
+            color: #e53e3e;
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        @media (max-width: 768px) {
+            .processing-container {
+                margin: 20px auto;
+            }
+            .processing-body {
+                padding: 20px;
+            }
+            .buttons-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="processing-container">
+        <div class="processing-header">
+            <h1><i class="fas fa-shopping-bag me-2"></i> Slaymart</h1>
+            <p>Your Fashion Destination</p>
+        </div>
+        <div class="processing-body">
+            <?php if (!empty($errors)): ?>
+                <i class="fas fa-exclamation-circle error-icon"></i>
+                <h2 class="processing-title">Order Failed</h2>
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <div class="buttons-container">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Go Back
+                    </a>
+                    <a href="../index.php" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i> Home
+                    </a>
+                </div>
+            <?php else: ?>
+                <i class="fas fa-spinner fa-spin processing-icon"></i>
+                <h2 class="processing-title">Processing Order</h2>
+                <p class="processing-message">Please wait while we confirm your order...</p>
+                <div class="spinner-border text-primary mt-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</body>
+</html>
