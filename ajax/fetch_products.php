@@ -4,21 +4,23 @@ include '../config/db.php';
 $category = $_GET['category'] ?? '';
 $category_safe = mysqli_real_escape_string($conn, $category);
 
-// Query banani hai category ke hisaab se
 if ($category_safe === 'all') {
   $query = "SELECT p.*, ROUND(AVG(r.rating),1) AS avg_rating 
             FROM products p 
             LEFT JOIN reviews r ON p.id = r.product_id
+            WHERE p.type = 'normal'
             GROUP BY p.id
             ORDER BY p.id DESC";
 } else {
   $query = "SELECT p.*, ROUND(AVG(r.rating),1) AS avg_rating 
             FROM products p 
             LEFT JOIN reviews r ON p.id = r.product_id
-            WHERE p.category = '$category_safe'
+            WHERE p.category = '$category_safe' 
+              AND p.type = 'normal'
             GROUP BY p.id
             ORDER BY p.id DESC";
 }
+
 
 $result = mysqli_query($conn, $query);
 ?>
@@ -32,34 +34,34 @@ $result = mysqli_query($conn, $query);
 
     <?php while ($row = mysqli_fetch_assoc($result)): ?>
       <?php
-        // Get product images
-        $img_sql = "SELECT image FROM product_images WHERE product_id = {$row['id']} ORDER BY id ASC LIMIT 2";
-        $img_res = mysqli_query($conn, $img_sql);
-        $images = [];
-        while ($img = mysqli_fetch_assoc($img_res)) {
-          $images[] = $img['image'];
-        }
-        $default_img = $images[0] ?? "no-image.png";
-        $hover_img   = $images[1] ?? $default_img;
+      // Get product images
+      $img_sql = "SELECT image FROM product_images WHERE product_id = {$row['id']} ORDER BY id ASC LIMIT 2";
+      $img_res = mysqli_query($conn, $img_sql);
+      $images = [];
+      while ($img = mysqli_fetch_assoc($img_res)) {
+        $images[] = $img['image'];
+      }
+      $default_img = $images[0] ?? "no-image.png";
+      $hover_img   = $images[1] ?? $default_img;
 
-        // Price calculation
-        $original_price = $row['price'];
-        $discount = $row['discount'];
-        $discounted_price = $original_price - ($original_price * $discount / 100);
+      // Price calculation
+      $original_price = $row['price'];
+      $discount = $row['discount'];
+      $discounted_price = $original_price - ($original_price * $discount / 100);
 
-        // Rating
-        $rating = $row['avg_rating'] ?? 0;
+      // Rating
+      $rating = $row['avg_rating'] ?? 0;
       ?>
       <div class="showcase">
         <div class="showcase-banner">
           <a href="./product-detail/index.php?id=<?= $row['id'] ?>">
-            <img src="./images/uploads/<?= $default_img ?>" 
-                 alt="<?= htmlspecialchars($row['name']) ?>" 
-                 width="300" class="product-img default">
+            <img src="./images/uploads/<?= $default_img ?>"
+              alt="<?= htmlspecialchars($row['name']) ?>"
+              width="300" class="product-img default">
 
-            <img src="./images/uploads/<?= $hover_img ?>" 
-                 alt="<?= htmlspecialchars($row['name']) ?>" 
-                 width="300" class="product-img hover">
+            <img src="./images/uploads/<?= $hover_img ?>"
+              alt="<?= htmlspecialchars($row['name']) ?>"
+              width="300" class="product-img hover">
           </a>
 
           <?php if ($discount > 0): ?>
@@ -71,13 +73,6 @@ $result = mysqli_query($conn, $query);
             <a href="./product-detail/index.php?id=<?= $row['id'] ?>">
               <button class="btn-action">
                 <ion-icon name="document-text-outline"></ion-icon>
-              </button>
-            </a>
-
-            <!-- Add to Cart -->
-            <a href="./add-to-cart/index.php?add=<?= $row['id'] ?>">
-              <button class="btn-action">
-                <ion-icon name="cart-outline"></ion-icon>
               </button>
             </a>
           </div>

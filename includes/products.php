@@ -68,7 +68,10 @@
 
                         <?php
                         // Get distinct categories
-                        $category_sql = "SELECT DISTINCT category FROM products";
+                        $category_sql = "SELECT DISTINCT category 
+                        FROM products 
+                        WHERE type = 'normal'";
+
                         $category_result = mysqli_query($conn, $category_sql);
                         while ($cat = mysqli_fetch_assoc($category_result)):
                         ?>
@@ -93,7 +96,10 @@
                                 <ul class="sidebar-submenu-category-list" data-accordion>
                                     <?php
                                     $sub_sql = "SELECT id, name FROM products 
-                                                WHERE category = '" . mysqli_real_escape_string($conn, $cat['category']) . "'";
+                                    WHERE category = '" . mysqli_real_escape_string($conn, $cat['category']) . "' 
+                                    AND type = 'normal'";
+
+
                                     $sub_result = mysqli_query($conn, $sub_sql);
                                     while ($sub = mysqli_fetch_assoc($sub_result)):
                                     ?>
@@ -114,18 +120,12 @@
             <div class="product-box">
                 <div class="product-box" id="product-list">
                     <?php
-                    // $query = "SELECT p.*, ROUND(AVG(f.rating), 1) AS avg_rating
-                    //             FROM products p
-                    //             LEFT JOIN reviews f ON p.id = f.product_id
-                    //             GROUP BY p.id
-                    //             ORDER BY p.id DESC";
-
                     $query = "SELECT p.*, ROUND(AVG(f.rating), 1) AS avg_rating
-            FROM products p
-            LEFT JOIN reviews f ON p.id = f.product_id
-            WHERE p.type = 'normal'
-            GROUP BY p.id
-            ORDER BY p.id DESC";
+                            FROM products p
+                            LEFT JOIN reviews f ON p.id = f.product_id
+                            WHERE p.type = 'normal'
+                            GROUP BY p.id
+                            ORDER BY p.id DESC";
                     $result = mysqli_query($conn, $query);
                     ?>
 
@@ -171,12 +171,6 @@
                                                 </button>
                                             </a>
 
-                                            <!-- Add to Cart -->
-                                            <a href="./add-to-cart/index.php?add=<?= $row['id'] ?>">
-                                                <button class="btn-action">
-                                                    <ion-icon name="cart-outline"></ion-icon>
-                                                </button>
-                                            </a>
                                         </div>
                                     </div>
 

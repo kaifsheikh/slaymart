@@ -21,7 +21,7 @@ if (isset($_POST['add'])) {
         // Insert into products
         $sql = "INSERT INTO products (name, category, description, price, discount, type)
                 VALUES ('$name', '$category', '$desc', '$price', '$discount', '$type')";
-                
+
         if (mysqli_query($conn, $sql)) {
             $product_id = mysqli_insert_id($conn);
 
@@ -50,7 +50,7 @@ if (isset($_POST['add'])) {
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            
+
             $allowed = ['jpg', 'jpeg', 'png', 'webp'];
             foreach ($_FILES['images']['name'] as $key => $filename) {
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -65,11 +65,9 @@ if (isset($_POST['add'])) {
 
             // ✅ Redirect according to type
             if ($type == "exclusive") {
-                header("Location: ../../exclusive_products/cart.php?success=1");
-                exit;
+                $success = "Product Added Successfully 🟢";
             } else {
-                header("Location: ../index.php?success=1");
-                exit;
+                $success = "Product Added Successfully 🟢";
             }
         } else {
             $error = "Database error: " . mysqli_error($conn);
@@ -80,6 +78,7 @@ if (isset($_POST['add'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -107,21 +106,21 @@ if (isset($_POST['add'])) {
             --box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
         }
-        
+
         body {
             background-color: #f8f9fe;
             color: var(--dark);
             min-height: 100vh;
             padding-bottom: 30px;
         }
-        
+
         .page-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
@@ -130,18 +129,18 @@ if (isset($_POST['add'])) {
             border-radius: 0 0 20px 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .page-header h1 {
             font-weight: 700;
             margin-bottom: 10px;
             font-size: 2rem;
         }
-        
+
         .page-header p {
             opacity: 0.9;
             font-size: 16px;
         }
-        
+
         .form-container {
             max-width: 900px;
             margin: 0 auto;
@@ -151,12 +150,12 @@ if (isset($_POST['add'])) {
             overflow: hidden;
             transition: var(--transition);
         }
-        
+
         .form-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 18px 40px rgba(50, 50, 93, 0.12), 0 8px 20px rgba(0, 0, 0, 0.08);
         }
-        
+
         .card-header {
             background-color: white;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -165,7 +164,7 @@ if (isset($_POST['add'])) {
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .card-header h4 {
             font-weight: 600;
             color: var(--dark);
@@ -174,18 +173,18 @@ if (isset($_POST['add'])) {
             align-items: center;
             gap: 10px;
         }
-        
+
         .card-body {
             padding: 2rem;
         }
-        
+
         .form-label {
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 0.5rem;
             font-size: 0.95rem;
         }
-        
+
         .form-control,
         .form-select {
             border-radius: 8px;
@@ -197,14 +196,14 @@ if (isset($_POST['add'])) {
             background-color: white;
             box-shadow: 0 1px 3px rgba(50, 50, 93, 0.05);
         }
-        
+
         .form-control:focus,
         .form-select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.1);
             background-color: white;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none;
@@ -218,13 +217,13 @@ if (isset($_POST['add'])) {
             justify-content: center;
             gap: 8px;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 20px rgba(94, 114, 228, 0.4);
             background: linear-gradient(135deg, #4c63d2, #7549d9);
         }
-        
+
         .btn-outline-secondary {
             background-color: white;
             border: 1px solid rgba(0, 0, 0, 0.1);
@@ -239,14 +238,14 @@ if (isset($_POST['add'])) {
             gap: 8px;
             box-shadow: 0 1px 3px rgba(50, 50, 93, 0.05);
         }
-        
+
         .btn-outline-secondary:hover {
             background-color: var(--light-gray);
             color: var(--dark);
             transform: translateY(-3px);
             box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
         }
-        
+
         .alert {
             border-radius: 8px;
             border: none;
@@ -256,27 +255,27 @@ if (isset($_POST['add'])) {
             align-items: center;
             gap: 10px;
         }
-        
+
         .alert-success {
             background-color: rgba(45, 206, 137, 0.1);
             color: #0a5c3c;
             border-left: 4px solid var(--success);
         }
-        
+
         .alert-danger {
             background-color: rgba(245, 54, 92, 0.1);
             color: #a02639;
             border-left: 4px solid var(--danger);
         }
-        
+
         .form-group {
             margin-bottom: 1.5rem;
         }
-        
+
         .input-icon {
             position: relative;
         }
-        
+
         .input-icon i {
             position: absolute;
             left: 15px;
@@ -284,18 +283,18 @@ if (isset($_POST['add'])) {
             transform: translateY(-50%);
             color: var(--gray);
         }
-        
+
         .input-icon .form-control,
         .input-icon .form-select {
             padding-left: 45px;
         }
-        
+
         .file-upload {
             position: relative;
             display: inline-block;
             width: 100%;
         }
-        
+
         .file-upload input[type=file] {
             position: absolute;
             opacity: 0;
@@ -303,7 +302,7 @@ if (isset($_POST['add'])) {
             height: 100%;
             cursor: pointer;
         }
-        
+
         .file-upload-label {
             display: block;
             padding: 0.75rem 1rem;
@@ -320,25 +319,25 @@ if (isset($_POST['add'])) {
             min-height: 120px;
             flex-direction: column;
         }
-        
+
         .file-upload:hover .file-upload-label {
             border-color: var(--primary);
             background-color: rgba(94, 114, 228, 0.05);
         }
-        
+
         .file-upload-label i {
             color: var(--primary);
             font-size: 2rem;
             margin-bottom: 10px;
         }
-        
+
         .preview-container {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin-top: 15px;
         }
-        
+
         .preview-box {
             width: 120px;
             height: 120px;
@@ -352,30 +351,30 @@ if (isset($_POST['add'])) {
             box-shadow: 0 2px 4px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
             position: relative;
         }
-        
+
         .preview-box img {
             max-width: 100%;
             max-height: 100%;
             object-fit: cover;
         }
-        
+
         .preview-placeholder {
             color: var(--gray);
             text-align: center;
             padding: 10px;
         }
-        
+
         .preview-placeholder i {
             font-size: 2rem;
             margin-bottom: 5px;
             color: var(--primary);
         }
-        
+
         .preview-placeholder p {
             font-size: 0.75rem;
             margin: 0;
         }
-        
+
         .badge-new {
             background: linear-gradient(135deg, var(--warning), var(--danger));
             color: white;
@@ -386,7 +385,7 @@ if (isset($_POST['add'])) {
             letter-spacing: 0.5px;
             font-weight: 600;
         }
-        
+
         .btn-back {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -399,13 +398,13 @@ if (isset($_POST['add'])) {
             gap: 8px;
             transition: var(--transition);
         }
-        
+
         .btn-back:hover {
             background: rgba(255, 255, 255, 0.3);
             color: white;
             transform: translateY(-2px);
         }
-        
+
         .section-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -417,23 +416,23 @@ if (isset($_POST['add'])) {
             align-items: center;
             gap: 10px;
         }
-        
+
         .section-title i {
             color: var(--primary);
         }
-        
+
         .form-row {
             display: flex;
             flex-wrap: wrap;
             margin: 0 -10px;
         }
-        
+
         .form-col {
             flex: 1;
             padding: 0 10px;
             min-width: 250px;
         }
-        
+
         .form-footer {
             display: flex;
             flex-wrap: wrap;
@@ -442,7 +441,7 @@ if (isset($_POST['add'])) {
             padding-top: 1.5rem;
             border-top: 1px solid var(--light-gray);
         }
-        
+
         .exclusive-section {
             background-color: rgba(94, 114, 228, 0.05);
             border-radius: 8px;
@@ -450,40 +449,40 @@ if (isset($_POST['add'])) {
             margin-top: 1rem;
             border: 1px solid rgba(94, 114, 228, 0.1);
         }
-        
+
         .exclusive-section .section-title {
             border-bottom-color: rgba(94, 114, 228, 0.2);
         }
-        
+
         .form-switch {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .form-switch .form-check-input {
             width: 3rem;
             height: 1.5rem;
         }
-        
+
         /* Color Selection UI */
         .color-selection {
             margin-top: 1rem;
         }
-        
+
         .color-options {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 10px;
         }
-        
+
         .color-option {
             position: relative;
             cursor: pointer;
             transition: var(--transition);
         }
-        
+
         .color-swatch {
             width: 50px;
             height: 50px;
@@ -497,7 +496,7 @@ if (isset($_POST['add'])) {
             position: relative;
             overflow: hidden;
         }
-        
+
         .color-swatch::before {
             content: '';
             position: absolute;
@@ -505,24 +504,24 @@ if (isset($_POST['add'])) {
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%);
             border-radius: 50%;
         }
-        
+
         .color-option input[type="checkbox"] {
             position: absolute;
             opacity: 0;
             width: 0;
             height: 0;
         }
-        
-        .color-option input[type="checkbox"]:checked + .color-swatch {
+
+        .color-option input[type="checkbox"]:checked+.color-swatch {
             border-color: var(--primary);
             transform: scale(1.1);
             box-shadow: 0 4px 12px rgba(94, 114, 228, 0.4);
         }
-        
-        .color-option input[type="checkbox"]:checked + .color-swatch::after {
+
+        .color-option input[type="checkbox"]:checked+.color-swatch::after {
             content: '\f00c';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
@@ -530,7 +529,7 @@ if (isset($_POST['add'])) {
             font-size: 18px;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         }
-        
+
         .color-name {
             position: absolute;
             bottom: -25px;
@@ -547,35 +546,35 @@ if (isset($_POST['add'])) {
             pointer-events: none;
             z-index: 10;
         }
-        
+
         .color-option:hover .color-name {
             opacity: 1;
             bottom: -30px;
         }
-        
+
         /* Size Selection UI */
         .size-selection {
             margin-top: 1.5rem;
         }
-        
+
         .size-options {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 10px;
         }
-        
+
         .size-option {
             position: relative;
         }
-        
+
         .size-option input[type="checkbox"] {
             position: absolute;
             opacity: 0;
             width: 0;
             height: 0;
         }
-        
+
         .size-button {
             display: flex;
             align-items: center;
@@ -592,20 +591,20 @@ if (isset($_POST['add'])) {
             transition: var(--transition);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-        
-        .size-option input[type="checkbox"]:checked + .size-button {
+
+        .size-option input[type="checkbox"]:checked+.size-button {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-color: var(--primary);
             color: white;
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(94, 114, 228, 0.3);
         }
-        
+
         .size-button:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
         }
-        
+
         /* Selection Counter */
         .selection-counter {
             display: inline-block;
@@ -620,49 +619,49 @@ if (isset($_POST['add'])) {
             font-weight: 600;
             margin-left: 8px;
         }
-        
+
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             .page-header {
                 padding: 30px 0;
                 margin-bottom: 20px;
             }
-            
+
             .page-header h1 {
                 font-size: 1.5rem;
             }
-            
+
             .card-body {
                 padding: 1.5rem;
             }
-            
+
             .preview-container {
                 justify-content: center;
             }
-            
+
             .preview-box {
                 width: 100px;
                 height: 100px;
             }
-            
+
             .form-footer {
                 flex-direction: column;
             }
-            
+
             .btn-primary,
             .btn-outline-secondary {
                 width: 100%;
             }
-            
+
             .form-col {
                 min-width: 100%;
             }
-            
+
             .color-swatch {
                 width: 40px;
                 height: 40px;
             }
-            
+
             .size-button {
                 min-width: 50px;
                 height: 45px;
@@ -670,34 +669,35 @@ if (isset($_POST['add'])) {
                 font-size: 14px;
             }
         }
-        
+
         /* Animation for page load */
         @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .form-container {
             animation: fadeIn 0.5s ease forwards;
         }
-        
+
         /* Custom checkbox styling */
         .form-check-input:checked {
             background-color: var(--primary);
             border-color: var(--primary);
         }
-        
+
         /* Image preview animation */
         .preview-box {
             animation: fadeIn 0.3s ease forwards;
         }
-        
+
         /* Loading spinner */
         .spinner-border {
             width: 1rem;
@@ -706,6 +706,7 @@ if (isset($_POST['add'])) {
         }
     </style>
 </head>
+
 <body>
     <!-- Page Header -->
     <div class="page-header">
@@ -721,7 +722,7 @@ if (isset($_POST['add'])) {
             </div>
         </div>
     </div>
-    
+
     <div class="container">
         <div class="form-container">
             <div class="card-header">
@@ -737,7 +738,7 @@ if (isset($_POST['add'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
-                
+
                 <!-- Error Message -->
                 <?php if ($error): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -746,13 +747,13 @@ if (isset($_POST['add'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
-                
+
                 <!-- Product Form -->
                 <form method="post" enctype="multipart/form-data" id="productForm">
                     <div class="section-title">
                         <i class="fas fa-info-circle"></i> Basic Information
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
@@ -773,7 +774,7 @@ if (isset($_POST['add'])) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Description</label>
                         <div class="input-icon">
@@ -781,7 +782,7 @@ if (isset($_POST['add'])) {
                             <textarea name="description" class="form-control" rows="3" placeholder="Enter product description" required></textarea>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Product Type</label>
                         <div class="form-switch">
@@ -793,11 +794,11 @@ if (isset($_POST['add'])) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="section-title mt-4">
                         <i class="fas fa-dollar-sign"></i> Pricing Information
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
@@ -818,11 +819,11 @@ if (isset($_POST['add'])) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="section-title mt-4">
                         <i class="fas fa-images"></i> Product Images
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Product Images (Multiple Selection)</label>
                         <div class="file-upload">
@@ -835,13 +836,13 @@ if (isset($_POST['add'])) {
                         </div>
                         <div class="preview-container" id="preview-container"></div>
                     </div>
-                    
+
                     <!-- Exclusive Product Section -->
                     <div id="exclusiveSection" class="exclusive-section" style="display:none;">
                         <div class="section-title">
                             <i class="fas fa-star"></i> Exclusive Product Details
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Stock Status</label>
                             <div class="input-icon">
@@ -852,7 +853,7 @@ if (isset($_POST['add'])) {
                                 </select>
                             </div>
                         </div>
-                        
+
                         <!-- Color Selection UI -->
                         <div class="color-selection">
                             <label class="form-label">
@@ -876,7 +877,7 @@ if (isset($_POST['add'])) {
                                 ?>
                             </div>
                         </div>
-                        
+
                         <!-- Size Selection UI -->
                         <div class="size-selection">
                             <label class="form-label">
@@ -898,7 +899,8 @@ if (isset($_POST['add'])) {
                             </div>
                         </div>
                     </div>
-                    
+                    <!-- Exclusive Product Section -->
+
                     <div class="form-footer">
                         <button type="submit" name="add" class="btn-primary">
                             <i class="fas fa-plus-circle"></i> Add Product
@@ -911,16 +913,16 @@ if (isset($_POST['add'])) {
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         // Toggle product type
         document.getElementById("typeToggle").addEventListener("change", function() {
             const exclusiveSection = document.getElementById("exclusiveSection");
             const typeLabel = document.getElementById("typeLabel");
-            
+
             if (this.checked) {
                 exclusiveSection.style.display = "block";
                 typeLabel.textContent = "Exclusive Product";
@@ -929,7 +931,7 @@ if (isset($_POST['add'])) {
                 typeLabel.textContent = "Normal Product";
             }
         });
-        
+
         // Auto-hide alerts after 5 seconds
         setTimeout(function() {
             document.querySelectorAll('.alert').forEach(function(alert) {
@@ -937,13 +939,13 @@ if (isset($_POST['add'])) {
                 bsAlert.close();
             });
         }, 5000);
-        
+
         // Multiple file upload preview
         document.getElementById('images').addEventListener('change', function() {
             const files = this.files;
             const previewContainer = document.getElementById('preview-container');
             previewContainer.innerHTML = '';
-            
+
             if (files.length > 0) {
                 [...files].forEach(file => {
                     if (file.type.match('image.*')) {
@@ -972,7 +974,7 @@ if (isset($_POST['add'])) {
                 previewContainer.appendChild(placeholder);
             }
         });
-        
+
         // Initialize with placeholder
         document.addEventListener('DOMContentLoaded', function() {
             const previewContainer = document.getElementById('preview-container');
@@ -985,29 +987,29 @@ if (isset($_POST['add'])) {
                 </div>
             `;
             previewContainer.appendChild(placeholder);
-            
+
             // Color selection counter
             const colorCheckboxes = document.querySelectorAll('.color-checkbox');
             const colorCounter = document.getElementById('colorCounter');
-            
+
             function updateColorCounter() {
                 const checked = document.querySelectorAll('.color-checkbox:checked').length;
                 colorCounter.textContent = checked;
             }
-            
+
             colorCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', updateColorCounter);
             });
-            
+
             // Size selection counter
             const sizeCheckboxes = document.querySelectorAll('.size-checkbox');
             const sizeCounter = document.getElementById('sizeCounter');
-            
+
             function updateSizeCounter() {
                 const checked = document.querySelectorAll('.size-checkbox:checked').length;
                 sizeCounter.textContent = checked;
             }
-            
+
             sizeCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', updateSizeCounter);
             });

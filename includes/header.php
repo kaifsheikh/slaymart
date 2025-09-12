@@ -297,13 +297,6 @@
               <ion-icon name="bag-handle-outline"></ion-icon>
             <span class="count">0</span>
             </a>
-
-            <!-- Add to Cart Button -->
-            <a href="./add-to-cart/index.php" class="action-btn">
-              <ion-icon name="cart-outline"></ion-icon>
-            <span class="count">0</span>
-            </a>
-
           </div>
         <?php endif; ?> <!-- If Close here -->
       </div>
@@ -321,12 +314,6 @@
           <!-- My Order -->
           <a href="./users/my_orders.php" class="action-btn">
             <ion-icon name="bag-handle-outline"></ion-icon>
-            <span class="count">0</span>
-          </a>
-          
-          <!-- My Order -->
-          <a href="./users/add-to-cart.php" class="action-btn">
-            <ion-icon name="cart-outline"></ion-icon>
             <span class="count">0</span>
           </a>
 
