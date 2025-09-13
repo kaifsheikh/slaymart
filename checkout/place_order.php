@@ -28,10 +28,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $delivery_type    = trim($_POST['delivery_type'] ?? 'Standard');
     $delivery_charges = (float)($_POST['delivery_charges'] ?? 250);
     $selected_image   = trim($_POST['selected_image'] ?? '');
+    $product_type     = trim($_POST['product_type'] ?? '');
+    
+    // Get color and size for exclusive products
+    $color_id = ($product_type === 'exclusive') ? (int)($_POST['color_id'] ?? 0) : 0;
+    $size_id = ($product_type === 'exclusive') ? (int)($_POST['size_id'] ?? 0) : 0;
     
     // Fetch product name and image from product_images table
     if ($product_id > 0) {
-        $stmt = $conn->prepare("SELECT p.name, pi.image 
+        $stmt = $conn->prepare("SELECT p.name, pi.image, p.stock_status 
                                FROM products p 
                                LEFT JOIN product_images pi ON p.id = pi.product_id 
                                WHERE p.id = ?");
@@ -41,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $product_name = $row['name'];
+            $stock_status = $row['stock_status'];
             // Use selected image if available, otherwise use product image
             $selected_image = !empty($selected_image) ? $selected_image : ($row['image'] ?? '');
         }
@@ -64,64 +70,100 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($payment_method === '') $errors[] = "Payment method is required.";
     if ($delivery_type === '') $errors[] = "Delivery type is required.";
     
+    // Additional validation for exclusive products
+    if ($product_type === 'exclusive') {
+        if ($color_id <= 0) $errors[] = "Color selection is required for exclusive products.";
+        if ($size_id <= 0) $errors[] = "Size selection is required for exclusive products.";
+    }
+    
     // ✅ Process order if no errors
     if (empty($errors)) {
-        if ($payment_method === "COD") {
-            $stmt = $conn->prepare("INSERT INTO orders 
-                (product_id, user_id, fullname, email, phone, address, quantity, price, payment_method, note, selected_image, delivery_type, delivery_charges) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            
-            // Bind params → types: i (int), s (string), d (double/float)
-            $stmt->bind_param(
-                "iissssisssssd",
-                $product_id,
-                $user_id,
-                $fullname,
-                $email,
-                $phone,
-                $address,
-                $quantity,
-                $price,
-                $payment_method,
-                $note,
-                $selected_image,
-                $delivery_type,
-                $delivery_charges
-            );
-            if ($stmt->execute()) {
-                $order_id = $stmt->insert_id;
-                $stmt->close();
+        // Start transaction
+        $conn->begin_transaction();
+        
+        try {
+            if ($payment_method === "COD") {
+                // Insert order with color and size for exclusive products
+                $stmt = $conn->prepare("INSERT INTO orders 
+                    (product_id, user_id, fullname, email, phone, address, quantity, price, 
+                     payment_method, note, selected_image, delivery_type, delivery_charges, color_id, size_id) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 
-                // ✅ Redirect to thank you page for COD orders
-                $_SESSION['order_success'] = true;
-                header("Location: thank_you.php");
-                exit;
+                // Bind params → types: i (int), s (string), d (double/float)
+                $stmt->bind_param(
+                    "iissssisssssdii",
+                    $product_id,
+                    $user_id,
+                    $fullname,
+                    $email,
+                    $phone,
+                    $address,
+                    $quantity,
+                    $price,
+                    $payment_method,
+                    $note,
+                    $selected_image,
+                    $delivery_type,
+                    $delivery_charges,
+                    $color_id,
+                    $size_id
+                );
+                
+                if ($stmt->execute()) {
+                    $order_id = $stmt->insert_id;
+                    $stmt->close();
+                    
+                    // Update stock for exclusive products
+                    if ($product_type === 'exclusive' && $stock_status === 'in') {
+                        // You might want to implement a more sophisticated stock management system
+                        // For now, we'll just set the product to out of stock
+                        $update_stmt = $conn->prepare("UPDATE products SET stock_status = 'out' WHERE id = ?");
+                        $update_stmt->bind_param("i", $product_id);
+                        $update_stmt->execute();
+                        $update_stmt->close();
+                    }
+                    
+                    $conn->commit();
+                    
+                    // ✅ Redirect to thank you page for COD orders
+                    $_SESSION['order_success'] = true;
+                    header("Location: thank_you.php");
+                    exit;
+                } else {
+                    $errors[] = "Failed to place order: " . $stmt->error;
+                    $stmt->close();
+                    $conn->rollback();
+                }
             } else {
-                $errors[] = "Failed to place order: " . $stmt->error;
-                $stmt->close();
+                // ✅ For online payments, redirect with session
+                $_SESSION['pending_order'] = [
+                    'product_id'       => $product_id,
+                    'user_id'          => $user_id,
+                    'fullname'         => $fullname,
+                    'email'            => $email,
+                    'phone'            => $phone,
+                    'address'          => $address,
+                    'quantity'         => $quantity,
+                    'price'            => $price,
+                    'payment_method'   => $payment_method,
+                    'note'             => $note,
+                    'selected_image'   => $selected_image,
+                    'delivery_type'    => $delivery_type,
+                    'delivery_charges' => $delivery_charges,
+                    'product_name'     => $product_name,
+                    'subtotal'         => $subtotal,
+                    'total_amount'     => $total_amount,
+                    'color_id'         => $color_id,
+                    'size_id'          => $size_id,
+                    'product_type'     => $product_type
+                ];
+                $conn->commit();
+                header("Location: transaction_form.php");
+                exit;
             }
-        } else {
-            // ✅ For online payments, redirect with session
-            $_SESSION['pending_order'] = [
-                'product_id'       => $product_id,
-                'user_id'          => $user_id,
-                'fullname'         => $fullname,
-                'email'            => $email,
-                'phone'            => $phone,
-                'address'          => $address,
-                'quantity'         => $quantity,
-                'price'            => $price,
-                'payment_method'   => $payment_method,
-                'note'             => $note,
-                'selected_image'   => $selected_image,
-                'delivery_type'    => $delivery_type,
-                'delivery_charges' => $delivery_charges,
-                'product_name'     => $product_name,
-                'subtotal'         => $subtotal,
-                'total_amount'     => $total_amount
-            ];
-            header("Location: transaction_form.php");
-            exit;
+        } catch (Exception $e) {
+            $conn->rollback();
+            $errors[] = "Transaction failed: " . $e->getMessage();
         }
     }
 }
@@ -137,6 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        
         * {
             margin: 0;
             padding: 0;

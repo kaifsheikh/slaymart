@@ -1,5 +1,6 @@
 <?php
 include "../config/db.php";
+session_start();
 
 // Agar session me pending_order nahi hai to wapis checkout bhej do
 if (!isset($_SESSION['pending_order'])) {
@@ -16,11 +17,19 @@ if ($order['payment_method'] !== 'COD' && empty($transaction_id)) {
     die("❌ Transaction ID is required for online payments.");
 }
 
-// Insert into orders table
+// Get color_id and size_id from pending order (if available)
+$color_id = isset($order['color_id']) ? (int)$order['color_id'] : 0;
+$size_id = isset($order['size_id']) ? (int)$order['size_id'] : 0;
+
+// Insert into orders table with color_id and size_id
 $query = "INSERT INTO orders 
-    (product_id, user_id, fullname, email, phone, address, quantity, price, payment_method, note, selected_image, delivery_type, delivery_charges)
+    (product_id, user_id, fullname, email, phone, address, quantity, price, payment_method, 
+     note, selected_image, delivery_type, delivery_charges, color_id, size_id)
     VALUES 
-    ('{$order['product_id']}', '{$order['user_id']}', '{$order['fullname']}', '{$order['email']}', '{$order['phone']}', '{$order['address']}', '{$order['quantity']}', '{$order['price']}', '{$order['payment_method']}', '{$order['note']}', '{$order['selected_image']}', '{$order['delivery_type']}', '{$order['delivery_charges']}')";
+    ('{$order['product_id']}', '{$order['user_id']}', '{$order['fullname']}', '{$order['email']}', 
+     '{$order['phone']}', '{$order['address']}', '{$order['quantity']}', '{$order['price']}', 
+     '{$order['payment_method']}', '{$order['note']}', '{$order['selected_image']}', 
+     '{$order['delivery_type']}', '{$order['delivery_charges']}', '$color_id', '$size_id')";
 
 if (mysqli_query($conn, $query)) {
     $order_id = mysqli_insert_id($conn);

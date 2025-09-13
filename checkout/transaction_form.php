@@ -319,6 +319,10 @@ $delivery_charges = isset($order['delivery_charges']) ? $order['delivery_charges
                 <input type="hidden" name="price" value="<?php echo $total_amount; ?>">
                 <input type="hidden" name="delivery_charges" value="<?php echo $order['delivery_charges']; ?>">
                 
+                <!-- In your transaction_form.php, add these hidden fields -->
+                <input type="hidden" name="color_id" value="<?php echo isset($order['color_id']) ? $order['color_id'] : 0; ?>">
+                <input type="hidden" name="size_id" value="<?php echo isset($order['size_id']) ? $order['size_id'] : 0; ?>">
+
                 <div class="mb-3">
                     <label for="transaction_id" class="form-label">Transaction ID</label>
                     <input type="text" name="transaction_id" id="transaction_id" class="form-control" placeholder="Enter your transaction ID" required>
