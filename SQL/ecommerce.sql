@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 11, 2025 at 03:44 PM
+-- Generation Time: Sep 13, 2025 at 03:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -110,7 +110,10 @@ CREATE TABLE `orders` (
   `status` enum('pending','confirmed','processing','shipped','delivered','cancelled','refunded') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `delivery_type` varchar(50) DEFAULT 'Standard',
-  `delivery_charges` decimal(10,2) DEFAULT 0.00
+  `delivery_charges` decimal(10,2) DEFAULT 0.00,
+  `color_id` int(11) DEFAULT NULL,
+  `size_id` int(11) DEFAULT NULL,
+  `stock_status` enum('in','out') DEFAULT 'in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -135,7 +138,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `category`, `description`, `price`, `discount`, `type`, `stock_status`) VALUES
-(79, 'Shoes for Boys', 'Shoes', 'AI Overview\r\nA shoe is an item of footwear designed to protect, comfort, and support the human foot for various activities and terrains. Shoes typically feature a durable sole, an upper part made of materials like leather or plastic, and a heel. Beyond their functional role, shoes also serve as fashion accessories and can provide safety and injury prevention. ', 2000.00, 50.00, 'exclusive', 'in'),
+(79, 'Shoes for Boys', 'Shoes', 'AI Overview\r\nA shoe is an item of footwear designed to protect, comfort, and support the human foot for various activities and terrains. Shoes typically feature a durable sole, an upper part made of materials like leather or plastic, and a heel. Beyond their functional role, shoes also serve as fashion accessories and can provide safety and injury prevention. ', 2000.00, 50.00, 'exclusive', 'out'),
 (80, 'Digital Watches', 'Watches', 'gkfjdgkldfn', 1000.00, 50.00, 'normal', 'in');
 
 -- --------------------------------------------------------
@@ -155,10 +158,11 @@ CREATE TABLE `product_colors` (
 --
 
 INSERT INTO `product_colors` (`id`, `product_id`, `color_id`) VALUES
-(19, 79, 11),
-(20, 79, 13),
-(21, 79, 14),
-(22, 79, 15);
+(29, 79, 11),
+(30, 79, 12),
+(31, 79, 13),
+(32, 79, 14),
+(33, 79, 15);
 
 -- --------------------------------------------------------
 
@@ -203,10 +207,10 @@ CREATE TABLE `product_sizes` (
 --
 
 INSERT INTO `product_sizes` (`id`, `product_id`, `size_id`) VALUES
-(17, 79, 11),
-(18, 79, 12),
-(19, 79, 13),
-(20, 79, 14);
+(26, 79, 11),
+(27, 79, 12),
+(28, 79, 13),
+(29, 79, 14);
 
 -- --------------------------------------------------------
 
@@ -223,6 +227,13 @@ CREATE TABLE `reviews` (
   `feedback` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `order_id`, `product_id`, `user_id`, `rating`, `feedback`, `created_at`) VALUES
+(26, NULL, 79, 21, 2, 'Good One', '2025-09-13 11:21:34');
 
 -- --------------------------------------------------------
 
@@ -406,7 +417,7 @@ ALTER TABLE `deals`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -418,7 +429,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `product_colors`
 --
 ALTER TABLE `product_colors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `product_images`
@@ -430,13 +441,13 @@ ALTER TABLE `product_images`
 -- AUTO_INCREMENT for table `product_sizes`
 --
 ALTER TABLE `product_sizes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `sizes`
@@ -448,7 +459,7 @@ ALTER TABLE `sizes`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `users`
