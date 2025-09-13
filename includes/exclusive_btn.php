@@ -1,5 +1,5 @@
 <!-- Floating Exclusive Products Button -->
-<a href="./exclusive_products/cart.php" class="exclusive-btn" target="_blank">
+<a href="./exclusive_products/cart.php" class="exclusive-btn">
    <i class="fas fa-gem"></i> Exclusive
 </a>
 

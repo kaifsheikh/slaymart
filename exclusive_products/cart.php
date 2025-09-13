@@ -71,7 +71,7 @@ $result = mysqli_query($conn, $query);
                 <!-- Product Content -->
                 <div class="product-content">
                     <div class="product-category"><?= htmlspecialchars($row['category']) ?></div>
-                    <h3 class="product-title"><?= htmlspecialchars($row['name']) ?></h3>
+                    <a href="./product_detail.php?id=<?= $row['id'] ?>"><h3 class="product-title"><?= htmlspecialchars($row['name']) ?></h3></a>
 
                     <div class="product-rating">
                         <?php

@@ -7,66 +7,41 @@ if (!isset($_SESSION['user_id'])) {
 }
 $user_id = $_SESSION['user_id'];
 
-// Check if we have a session variable for order success
-if (isset($_SESSION['order_success'])) {
-    unset($_SESSION['order_success']);
-    // Get the last order for this user
-    $orderQuery = $conn->prepare("
-        SELECT o.id, o.payment_method, o.delivery_type, o.delivery_charges, 
-               o.price, o.quantity, o.note, o.created_at, 
-               p.name AS product_name
-        FROM orders o
-        LEFT JOIN products p ON o.product_id = p.id
-        WHERE o.user_id = ?
-        ORDER BY o.id DESC 
-        LIMIT 1
-    ");
-    $orderQuery->bind_param("i", $user_id);
-    $orderQuery->execute();
-    $orderResult = $orderQuery->get_result()->fetch_assoc();
-    $orderQuery->close();
-} else {
-    // Fallback to the original logic
-    $orderQuery = $conn->prepare("
-        SELECT o.id, o.payment_method, o.delivery_type, o.delivery_charges, 
-               o.price, o.quantity, o.note, o.created_at, 
-               p.name AS product_name
-        FROM orders o
-        LEFT JOIN products p ON o.product_id = p.id
-        WHERE o.user_id = ?
-        ORDER BY o.id DESC 
-        LIMIT 1
-    ");
-    $orderQuery->bind_param("i", $user_id);
-    $orderQuery->execute();
-    $orderResult = $orderQuery->get_result()->fetch_assoc();
-    $orderQuery->close();
-}
+// Get last order
+$orderQuery = $conn->prepare("
+    SELECT o.id, o.payment_method, o.delivery_type, o.delivery_charges, 
+           o.price, o.quantity, o.note, o.created_at, 
+           o.selected_image,  -- ✅ directly bring selected_image
+           p.name AS product_name
+    FROM orders o
+    LEFT JOIN products p ON o.product_id = p.id
+    WHERE o.user_id = ?
+    ORDER BY o.id DESC 
+    LIMIT 1
+");
+$orderQuery->bind_param("i", $user_id);
+$orderQuery->execute();
+$orderResult = $orderQuery->get_result()->fetch_assoc();
+$orderQuery->close();
 
 if (!$orderResult) {
     die("No order found.");
 }
+
 // ✅ Assign values
 $payment_method   = $orderResult['payment_method'] ?? 'Cash on Delivery';
 $delivery_type    = $orderResult['delivery_type'] ?? 'Standard';
 $delivery_charges = (float)($orderResult['delivery_charges'] ?? 0);
 $product_name     = $orderResult['product_name'] ?? 'Unknown Product';
-$price            = (float)$orderResult['price']; // already total price (subtotal + delivery)
+$price            = (float)$orderResult['price']; 
 $quantity         = (int)$orderResult['quantity'];
 $note             = $orderResult['note'] ?? '';
 $created_at       = $orderResult['created_at'];
-// ✅ Fetch product image from product_images
-$imageQuery = $conn->prepare("
-    SELECT image FROM product_images 
-    WHERE product_id = (SELECT product_id FROM orders WHERE id = ?) 
-    ORDER BY id ASC LIMIT 1
-");
-$imageQuery->bind_param("i", $orderResult['id']);
-$imageQuery->execute();
-$imageRow = $imageQuery->get_result()->fetch_assoc();
-$imageQuery->close();
-$product_image = $imageRow['image'] ?? 'placeholder.png';
+
+// ✅ Use selected_image from orders table
+$product_image = $orderResult['selected_image'] ?? 'placeholder.png';
 ?>
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
