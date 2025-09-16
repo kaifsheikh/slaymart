@@ -14,11 +14,13 @@ if ($row) {
     // delete db record
     mysqli_query($conn, "DELETE FROM banners WHERE id=$id");
 
-    // delete file
-    if (file_exists($imagePath)) {
+    // delete file only if exists and not empty
+    if (!empty($row['image']) && file_exists($imagePath)) {
         unlink($imagePath);
     }
 
-    echo "<script>alert('Banner deleted successfully!'); window.location='view-banners.php';</script>";
+    echo "<script>alert('✅ Banner deleted successfully!'); window.location='view-banners.php';</script>";
+} else {
+    echo "<script>alert('❌ Banner not found!'); window.location='view-banners.php';</script>";
 }
 ?>

@@ -43,12 +43,22 @@ $first = true;
       <?php while ($row = mysqli_fetch_assoc($result)) { ?>
         <div class="slider-item <?php echo $first ? 'active' : ''; ?>">
           <img src="images/banners/<?php echo $row['image']; ?>" class="banner-img" alt="banner">
+          
           <div class="banner-content">
-            <p class="banner-subtitle"><?php echo $row['subtitle']; ?></p>
-            <h2 class="banner-title"><?php echo $row['title']; ?></h2>
-            <p class="banner-text">starting at <b><?php echo $row['price']; ?></b></p>
-            <a href="" class="banner-btn">Shop now</a>
-          </div>
+  <?php if (!empty($row['subtitle'])) { ?>
+    <p class="banner-subtitle"><?php echo $row['subtitle']; ?></p>
+  <?php } ?>
+  
+  <?php if (!empty($row['title'])) { ?>
+    <h2 class="banner-title"><?php echo $row['title']; ?></h2>
+  <?php } ?>
+  
+  <?php if (!empty($row['price'])) { ?>
+    <p class="banner-text">starting at <b><?php echo $row['price']; ?></b></p>
+  <?php } ?>
+  
+  <a href="" class="banner-btn">Shop now</a>
+</div>
         </div>
       <?php $first = false; } ?>
 

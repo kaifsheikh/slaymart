@@ -65,19 +65,20 @@ $related_res = mysqli_query($conn, $related_sql);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($product['name']) ?> | Premium Product</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #1a1a1a;
-      --secondary: #d4af37;
-      --accent: #e74c3c;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --border-radius: 8px;
-      --transition: all 0.3s ease;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+      --amazon-blue: #131921;
+      --amazon-orange: #FF9900;
+      --amazon-light-orange: #FFD814;
+      --amazon-dark-blue: #232F3E;
+      --amazon-light-gray: #F7F7F7;
+      --amazon-border: #D5D9D9;
+      --amazon-text: #0F1111;
+      --amazon-light-text: #565959;
+      --amazon-star: #FFA41C;
+      --border-radius: 4px;
+      --transition: all 0.2s ease;
     }
     
     * {
@@ -87,15 +88,10 @@ $related_res = mysqli_query($conn, $related_sql);
     }
     
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Roboto', sans-serif;
       background-color: #fff;
-      color: var(--dark);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    
-    h1, h2, h3, h4 {
-      font-family: 'Playfair Display', serif;
+      color: var(--amazon-text);
+      line-height: 1.5;
     }
     
     .container {
@@ -106,68 +102,45 @@ $related_res = mysqli_query($conn, $related_sql);
     
     /* Header */
     .header {
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      background: var(--amazon-blue);
+      color: white;
+      padding: 15px 0;
       position: sticky;
       top: 0;
       z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
     .header-content {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      padding: 15px 0;
     }
     
     .logo {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 700;
-      color: var(--primary);
+      color: white;
       text-decoration: none;
-      letter-spacing: 1px;
-    }
-    
-    .logo span {
-      color: var(--secondary);
-    }
-    
-    .header-icons {
       display: flex;
-      gap: 20px;
-    }
-    
-    .header-icon {
-      font-size: 20px;
-      color: var(--dark);
-      position: relative;
+      align-items: center;
       transition: var(--transition);
     }
     
-    .header-icon:hover {
-      color: var(--secondary);
+    .logo:hover {
+      color: var(--amazon-light-orange);
     }
     
-    .cart-count {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: var(--accent);
-      color: white;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 600;
+    .logo span {
+      color: var(--amazon-light-orange);
     }
     
     /* Breadcrumb */
     .breadcrumb {
-      padding: 20px 0;
+      padding: 15px 0;
       font-size: 14px;
+      background: var(--amazon-light-gray);
+      border-bottom: 1px solid var(--amazon-border);
     }
     
     .breadcrumb-item {
@@ -175,80 +148,91 @@ $related_res = mysqli_query($conn, $related_sql);
     }
     
     .breadcrumb-item:not(:last-child)::after {
-      content: "/";
+      content: ">";
       margin: 0 10px;
-      color: var(--gray);
+      color: var(--amazon-light-text);
     }
     
     .breadcrumb-item a {
-      color: var(--gray);
+      color: var(--amazon-light-text);
       text-decoration: none;
-      transition: var(--transition);
     }
     
     .breadcrumb-item a:hover {
-      color: var(--secondary);
+      text-decoration: underline;
+      color: var(--amazon-orange);
     }
     
     .breadcrumb-item.active {
-      color: var(--primary);
-      font-weight: 500;
+      color: var(--amazon-text);
     }
     
     /* Product Section */
     .product-section {
-      padding: 40px 0;
+      padding: 30px 0;
     }
     
     .product-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: start;
+      gap: 40px;
     }
     
     /* Product Gallery */
     .product-gallery {
-      position: sticky;
-      top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .main-image-container {
+      position: relative;
+      border: 1px solid var(--amazon-border);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      background: white;
+      height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .main-image {
-      width: 100%;
-      height: 500px;
-      object-fit: cover;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-      transition: var(--transition);
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      transform-origin: center center;
     }
     
-    .main-image:hover {
-      transform: scale(1.02);
+    .main-image-container:hover .main-image {
+      transform: scale(1.5);
     }
     
     .thumbnail-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 5px;
     }
     
     .thumbnail {
-      width: 100%;
-      height: 100px;
+      min-width: 80px;
+      height: 80px;
       object-fit: cover;
+      border: 1px solid var(--amazon-border);
       border-radius: var(--border-radius);
       cursor: pointer;
       transition: var(--transition);
-      border: 2px solid transparent;
     }
     
     .thumbnail:hover {
-      border-color: var(--secondary);
+      border-color: var(--amazon-orange);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
     .thumbnail.active {
-      border-color: var(--secondary);
+      border: 2px solid var(--amazon-orange);
     }
     
     /* Product Details */
@@ -256,375 +240,359 @@ $related_res = mysqli_query($conn, $related_sql);
       padding: 20px 0;
     }
     
-    .product-badge {
-      display: inline-block;
-      background: var(--secondary);
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 15px;
+    .product-title {
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 10px;
+      line-height: 1.3;
     }
     
-    .product-title {
-      font-size: 36px;
+    .product-badge {
+      display: inline-block;
+      background: var(--amazon-orange);
+      color: var(--amazon-blue);
+      padding: 3px 8px;
+      border-radius: var(--border-radius);
+      font-size: 12px;
       font-weight: 700;
-      margin-bottom: 15px;
-      line-height: 1.2;
-      color: var(--primary);
+      margin-bottom: 10px;
     }
     
     .product-rating {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     
     .stars {
-      color: var(--secondary);
+      color: var(--amazon-star);
     }
     
     .rating-value {
       font-weight: 500;
-      color: var(--gray);
+      color: var(--amazon-light-text);
     }
-    
+  
     .product-price {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
     
-    .current-price {
+    .price-currency {
+      font-size: 14px;
+      vertical-align: super;
+    }
+    
+    .price-whole {
       font-size: 28px;
-      font-weight: 700;
-      color: var(--accent);
+      font-weight: 400;
+    }
+    
+    .price-fraction {
+      font-size: 16px;
+      vertical-align: super;
     }
     
     .original-price {
-      font-size: 18px;
-      color: var(--gray);
+      font-size: 14px;
+      color: var(--amazon-light-text);
       text-decoration: line-through;
+      margin-left: 10px;
     }
     
     .discount-badge {
-      background: var(--accent);
+      background: #CC0C39;
       color: white;
-      padding: 5px 10px;
-      border-radius: 4px;
+      padding: 2px 6px;
+      border-radius: var(--border-radius);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
+      margin-left: 10px;
     }
     
     .product-description {
-      color: var(--gray);
-      margin-bottom: 30px;
-      line-height: 1.8;
+      color: var(--amazon-light-text);
+      margin-bottom: 20px;
+      line-height: 1.5;
     }
     
     .product-options {
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     
     .option-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
     
     .color-options {
       display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
+      gap: 8px;
+      margin-bottom: 20px;
     }
     
     .color-option {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       cursor: pointer;
-      border: 3px solid transparent;
+      border: 2px solid transparent;
       transition: var(--transition);
     }
     
     .color-option:hover {
+      border-color: var(--amazon-orange);
       transform: scale(1.1);
-    }
-    
-    .color-option.active {
-      border-color: var(--primary);
     }
     
     .size-options {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
     
     .size-option {
-      padding: 8px 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 8px 12px;
+      border: 1px solid var(--amazon-border);
+      border-radius: var(--border-radius);
       cursor: pointer;
       transition: var(--transition);
-      font-weight: 500;
+      font-size: 14px;
+      background: white;
     }
     
     .size-option:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+      border-color: var(--amazon-orange);
     }
-    
-    .size-option.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    
+     
     .product-actions {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     
     .btn {
-      padding: 15px 30px;
-      border-radius: 4px;
-      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      font-weight: 700;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       transition: var(--transition);
       border: none;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
     
     .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      background: var(--amazon-orange);
+      color: var(--amazon-blue);
+      border: 1px solid var(--amazon-light-orange);
+      border-radius: 20px;
     }
     
     .btn-primary:hover {
-      background: #333;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      background: var(--amazon-light-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     
     .btn-secondary {
-      background: var(--secondary);
-      color: white;
-      box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+      background: var(--amazon-light-gray);
+      color: var(--amazon-text);
+      border: 1px solid var(--amazon-border);
+      border-radius: 20px;
     }
     
     .btn-secondary:hover {
-      background: #c9a030;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+      background: var(--amazon-border);
     }
     
     .product-meta {
-      border-top: 1px solid #eee;
-      padding-top: 20px;
-      margin-top: 20px;
+      border-top: 1px solid var(--amazon-border);
+      padding-top: 15px;
+      margin-top: 15px;
     }
     
     .meta-item {
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      font-size: 14px;
     }
     
     .meta-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 15px;
-      color: var(--secondary);
+      margin-right: 10px;
+      color: var(--amazon-light-text);
     }
     
     .meta-text {
-      font-weight: 500;
+      color: var(--amazon-light-text);
+    }
+    
+    .meta-text strong {
+      color: var(--amazon-text);
     }
     
     /* Tabs Section */
     .tabs-section {
-      padding: 60px 0;
-      background: var(--light);
+      padding: 30px 0;
+      background: var(--amazon-light-gray);
+      border-top: 1px solid var(--amazon-border);
     }
     
     .tabs-header {
       display: flex;
-      border-bottom: 1px solid #ddd;
-      margin-bottom: 30px;
+      border-bottom: 1px solid var(--amazon-border);
+      margin-bottom: 20px;
+      overflow-x: auto;
     }
     
     .tab-btn {
-      padding: 15px 30px;
+      padding: 12px 20px;
       background: none;
       border: none;
-      font-weight: 600;
-      color: var(--gray);
+      font-weight: 700;
+      color: var(--amazon-light-text);
       cursor: pointer;
       transition: var(--transition);
       position: relative;
-      font-size: 16px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-size: 14px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
     }
     
     .tab-btn:hover {
-      color: var(--primary);
+      color: var(--amazon-text);
+      border-bottom-color: var(--amazon-border);
     }
     
     .tab-btn.active {
-      color: var(--primary);
-    }
-    
-    .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: var(--secondary);
+      color: var(--amazon-orange);
+      border-bottom-color: var(--amazon-orange);
     }
     
     .tab-content {
       display: none;
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--amazon-border);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     
     .tab-content.active {
       display: block;
-      animation: fadeIn 0.5s ease;
+      animation: fadeIn 0.3s ease;
     }
     
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
     
+    .tab-content h3 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 15px;
+    }
+    
     .tab-content p {
-      color: var(--gray);
-      line-height: 1.8;
-      margin-bottom: 20px;
+      color: var(--amazon-text);
+      line-height: 1.6;
+      margin-bottom: 15px;
     }
     
     /* Reviews */
     .review-item {
       background: white;
       border-radius: var(--border-radius);
-      padding: 25px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 1px solid var(--amazon-border);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     
     .review-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
     
     .reviewer-name {
-      font-weight: 600;
-      color: var(--primary);
+      font-weight: 500;
+      color: var(--amazon-text);
     }
     
     .review-date {
-      color: var(--gray);
+      color: var(--amazon-light-text);
       font-size: 14px;
     }
     
     .review-rating {
-      color: var(--secondary);
-      margin-bottom: 15px;
+      color: var(--amazon-star);
+      margin-bottom: 10px;
     }
     
     .review-text {
-      color: var(--gray);
-      line-height: 1.7;
+      color: var(--amazon-text);
+      line-height: 1.5;
     }
     
     .no-reviews {
       text-align: center;
-      padding: 40px;
-      color: var(--gray);
+      padding: 30px;
+      color: var(--amazon-light-text);
+      background: white;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--amazon-border);
     }
     
     .no-reviews i {
-      font-size: 48px;
-      color: var(--secondary);
-      margin-bottom: 15px;
+      font-size: 36px;
+      color: var(--amazon-orange);
+      margin-bottom: 10px;
     }
     
     /* Related Products */
-    .related-section {
-      padding: 60px 0;
-    }
+   
     
-    .section-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
+   
     
-    .section-title {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 15px;
-      color: var(--primary);
-    }
-    
-    .section-subtitle {
-      color: var(--gray);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 30px;
-    }
+  
     
     .product-card {
       background: white;
       border-radius: var(--border-radius);
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--amazon-border);
       transition: var(--transition);
     }
     
     .product-card:hover {
-      transform: translateY(-10px);
-      box-shadow: var(--shadow-hover);
+      border-color: var(--amazon-orange);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
     }
     
     .product-card-img {
-      height: 250px;
+      height: 200px;
       overflow: hidden;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .product-card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
       transition: var(--transition);
     }
     
@@ -633,150 +601,79 @@ $related_res = mysqli_query($conn, $related_sql);
     }
     
     .product-card-body {
-      padding: 20px;
+      padding: 15px;
     }
     
     .product-card-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--primary);
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 8px;
+      color: var(--amazon-text);
+      height: 40px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
     
     .product-card-price {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--amazon-text);
     }
     
     .product-card-original-price {
-      font-size: 16px;
-      color: var(--gray);
+      font-size: 12px;
+      color: var(--amazon-light-text);
       text-decoration: line-through;
-      margin-left: 10px;
-    }
-    
-    /* Footer */
-    .footer {
-      background: var(--primary);
-      color: white;
-      padding: 40px 0;
-      text-align: center;
-    }
-    
-    .footer-text {
-      margin-bottom: 10px;
-    }
-    
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-    
-    .footer-links a {
-      color: white;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-    
-    .footer-links a:hover {
-      color: var(--secondary);
+      margin-left: 8px;
     }
     
     /* Responsive Design */
     @media (max-width: 992px) {
       .product-container {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 30px;
       }
       
-      .product-gallery {
-        position: static;
-      }
-      
-      .main-image {
+      .main-image-container {
         height: 400px;
       }
     }
     
     @media (max-width: 768px) {
+      .header-content {
+        flex-wrap: wrap;
+      }
+      
       .product-title {
-        font-size: 28px;
-      }
-      
-      .current-price {
-        font-size: 24px;
-      }
-      
-      .product-actions {
-        flex-direction: column;
+        font-size: 20px;
       }
       
       .btn {
         width: 100%;
+        margin-bottom: 10px;
       }
       
-      .tabs-header {
-        overflow-x: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--secondary) var(--light);
-      }
-      
-      .tabs-header::-webkit-scrollbar {
-        height: 6px;
-      }
-      
-      .tabs-header::-webkit-scrollbar-track {
-        background: var(--light);
-      }
-      
-      .tabs-header::-webkit-scrollbar-thumb {
-        background-color: var(--secondary);
-      }
-      
-      .tab-btn {
-        white-space: nowrap;
-      }
-      
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-      }
     }
     
     @media (max-width: 576px) {
-      .header-content {
-        padding: 10px 0;
-      }
-      
-      .logo {
-        font-size: 20px;
-      }
-      
-      .header-icons {
-        gap: 15px;
+      .header-icon span {
+        display: none;
       }
       
       .product-title {
-        font-size: 24px;
-      }
-      
-      .current-price {
-        font-size: 20px;
+        font-size: 18px;
       }
       
       .thumbnail-container {
-        grid-template-columns: repeat(3, 1fr);
+        justify-content: center;
       }
       
       .section-title {
-        font-size: 28px;
+        font-size: 20px;
       }
-      
-      .products-grid {
-        grid-template-columns: 1fr;
-      }
+
     }
   </style>
 </head>
@@ -785,26 +682,16 @@ $related_res = mysqli_query($conn, $related_sql);
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <a href="../index.php" class="logo">SLAY<span>MART</span></a>
-        <div class="header-icons">
-          <a href="#" class="header-icon">
-            <i class="far fa-heart"></i>
-          </a>
-          <a href="#" class="header-icon">
-            <i class="far fa-user"></i>
-          </a>
-          <a href="../cart/index.php" class="header-icon">
-            <i class="fas fa-shopping-bag"></i>
-            <span class="cart-count">3</span>
-          </a>
-        </div>
+        <a href="../index.php" class="logo">
+          <span>SLAYMART</span>
+        </a>
       </div>
     </div>
   </header>
   
   <!-- Breadcrumb -->
-  <div class="container">
-    <div class="breadcrumb">
+  <div class="breadcrumb">
+    <div class="container">
       <div class="breadcrumb-item"><a href="../index.php">Home</a></div>
       <div class="breadcrumb-item"><a href="../index.php?category=<?= urlencode($product['category']) ?>"><?= htmlspecialchars($product['category']) ?></a></div>
       <div class="breadcrumb-item active"><?= htmlspecialchars($product['name']) ?></div>
@@ -817,7 +704,9 @@ $related_res = mysqli_query($conn, $related_sql);
       <div class="product-container">
         <!-- Product Gallery -->
         <div class="product-gallery">
-          <img src="../images/uploads/<?= $images[0] ?? 'no-image.png' ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="main-image" id="mainImage">
+          <div class="main-image-container">
+            <img src="../images/uploads/<?= $images[0] ?? 'no-image.png' ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="main-image" id="mainImage">
+          </div>
           <div class="thumbnail-container">
             <?php foreach ($images as $i => $img): ?>
               <img src="../images/uploads/<?= $img ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="thumbnail <?= $i == 0 ? 'active' : '' ?>" data-image="../images/uploads/<?= $img ?>">
@@ -835,15 +724,23 @@ $related_res = mysqli_query($conn, $related_sql);
               <?php
               $rating = $product['avg_rating'] ?? 0;
               for ($i = 1; $i <= 5; $i++):
-                echo '<i class="fas fa-star"></i>';
+                if ($i <= floor($rating)) {
+                  echo '<i class="fas fa-star"></i>';
+                } elseif ($i - 0.5 <= $rating) {
+                  echo '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                  echo '<i class="far fa-star"></i>';
+                }
               endfor;
               ?>
             </div>
-            <span class="rating-value"><?= $rating ?> (24 Reviews)</span>
+            <span class="rating-value"><?= $rating ?></span>
           </div>
           
           <div class="product-price">
-            <span class="current-price">PKR <?= number_format($final_price) ?></span>
+            <span class="price-currency">PKR</span>
+            <span class="price-whole"><?= number_format($final_price, 0, '', '') ?></span>
+            <span class="price-fraction">00</span>
             <?php if ($product['discount'] > 0): ?>
               <span class="original-price">PKR <?= number_format($product['price']) ?></span>
               <span class="discount-badge">Save <?= $product['discount'] ?>%</span>
@@ -857,17 +754,17 @@ $related_res = mysqli_query($conn, $related_sql);
           <div class="product-options">
             <!-- Colors -->
             <?php if (mysqli_num_rows($color_res) > 0): ?>
-              <div class="option-title">Color</div>
+              <div class="option-title">Color: </div>
               <div class="color-options">
                 <?php while ($c = mysqli_fetch_assoc($color_res)): ?>
-                  <div class="color-option active" style="background-color: <?= $c['name'] ?>"></div>
+                  <div class="color-option active" style="background-color: <?= $c['name'] ?>" title="<?= $c['name'] ?>"></div>
                 <?php endwhile; ?>
               </div>
             <?php endif; ?>
             
             <!-- Sizes -->
             <?php if (mysqli_num_rows($size_res) > 0): ?>
-              <div class="option-title">Size</div>
+              <div class="option-title">Size: </div>
               <div class="size-options">
                 <?php while ($s = mysqli_fetch_assoc($size_res)): ?>
                   <div class="size-option active"><?= $s['name'] ?></div>
@@ -877,32 +774,15 @@ $related_res = mysqli_query($conn, $related_sql);
           </div>
           
           <div class="product-actions">
-            <a href="../add-to-cart/index.php?add=<?= $product['id'] ?>" class="btn btn-primary">
-              <i class="fas fa-shopping-cart"></i> Add to Cart
-            </a>
-            <a href="../checkout/buy_now.php?id=<?= $product['id'] ?>" class="btn btn-secondary">
-              <i class="fas fa-bolt"></i> Buy Now
+            <a href="../checkout/buy_now.php?id=<?= $product['id'] ?>" class="btn btn-primary">
+              Buy Now
             </a>
           </div>
           
           <div class="product-meta">
             <div class="meta-item">
-              <div class="meta-icon">
-                <i class="fas fa-truck"></i>
-              </div>
-              <div class="meta-text">Free Shipping & Returns</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-icon">
-                <i class="fas fa-shield-alt"></i>
-              </div>
-              <div class="meta-text">1 Year Warranty</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-icon">
-                <i class="fas fa-undo"></i>
-              </div>
-              <div class="meta-text">30 Days Return Policy</div>
+              <i class="fas fa-truck meta-icon"></i>
+              <div class="meta-text"><strong>Standard delivery</strong> 250 PKR</div>
             </div>
           </div>
         </div>
@@ -915,42 +795,19 @@ $related_res = mysqli_query($conn, $related_sql);
     <div class="container">
       <div class="tabs-header">
         <button class="tab-btn active" data-tab="description">Description</button>
-        <button class="tab-btn" data-tab="specifications">Specifications</button>
         <button class="tab-btn" data-tab="reviews">Reviews (<?= mysqli_num_rows($review_res) ?>)</button>
         <button class="tab-btn" data-tab="shipping">Shipping</button>
       </div>
       
       <div class="tab-content active" id="description">
-        <h3 style="margin-bottom: 20px;">Product Description</h3>
+        <h3>Product Description</h3>
         <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
         <p>Our exclusive products are crafted with the finest materials and attention to detail. Each piece is designed to offer both style and functionality, making it the perfect addition to your collection.</p>
         <p>Experience luxury like never before with our premium range of products that are built to last and impress.</p>
       </div>
       
-      <div class="tab-content" id="specifications">
-        <h3 style="margin-bottom: 20px;">Specifications</h3>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 12px 0; font-weight: 600;">Brand</td>
-            <td style="padding: 12px 0;">Slaymart</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 12px 0; font-weight: 600;">Material</td>
-            <td style="padding: 12px 0;">Premium Quality</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 12px 0; font-weight: 600;">Dimensions</td>
-            <td style="padding: 12px 0;">Varies by product</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 12px 0; font-weight: 600;">Warranty</td>
-            <td style="padding: 12px 0;">1 Year</td>
-          </tr>
-        </table>
-      </div>
-      
       <div class="tab-content" id="reviews">
-        <h3 style="margin-bottom: 20px;">Customer Reviews</h3>
+        <h3>Customer Reviews</h3>
         <?php if (mysqli_num_rows($review_res) > 0): ?>
           <?php while ($review = mysqli_fetch_assoc($review_res)): ?>
             <div class="review-item">
@@ -968,81 +825,20 @@ $related_res = mysqli_query($conn, $related_sql);
           <?php endwhile; ?>
         <?php else: ?>
           <div class="no-reviews">
-            <i class="fas fa-comments"></i>
+            <i class="far fa-comments"></i>
             <p>No reviews yet. Be the first to review this product!</p>
           </div>
         <?php endif; ?>
       </div>
       
       <div class="tab-content" id="shipping">
-        <h3 style="margin-bottom: 20px;">Shipping & Returns</h3>
+        <h3>Shipping & Returns</h3>
         <p>We offer free shipping on all orders over PKR 5,000. Standard delivery takes 3-5 business days, while express delivery takes 1-2 business days.</p>
         <p>If you're not completely satisfied with your purchase, you can return it within 30 days for a full refund or exchange. Please ensure the product is in its original condition with all tags attached.</p>
-        <p>For more information, please refer to our <a href="#" style="color: var(--secondary);">Shipping Policy</a> and <a href="#" style="color: var(--secondary);">Return Policy</a>.</p>
+        <p>For more information, please refer to our <a href="../../web-info/shipping.php" style="color: var(--amazon-orange);">Shipping Policy</a> and <a href="../../web-info/policy.php" style="color: var(--amazon-orange);">Return Policy</a>.</p>
       </div>
     </div>
   </section>
-  
-  <!-- Related Products -->
-  <section class="related-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">You May Also Like</h2>
-        <p class="section-subtitle">Discover more exclusive products from our premium collection</p>
-      </div>
-      
-      <div class="products-grid">
-        <?php if (mysqli_num_rows($related_res) > 0): ?>
-          <?php while ($related = mysqli_fetch_assoc($related_res)): 
-            // Calculate discount price for related product
-            $related_final_price = $related['discount'] > 0 
-              ? $related['price'] - ($related['price'] * $related['discount'] / 100) 
-              : $related['price'];
-              
-            // Get first image for related product
-            $related_img_sql = "SELECT image FROM product_images WHERE product_id = {$related['id']} LIMIT 1";
-            $related_img_result = mysqli_query($conn, $related_img_sql);
-            $related_img = mysqli_fetch_assoc($related_img_result);
-            $related_image = $related_img['image'] ?? 'no-image.png';
-          ?>
-            <div class="product-card">
-              <div class="product-card-img">
-                <img src="../images/uploads/<?= $related_image ?>" alt="<?= htmlspecialchars($related['name']) ?>">
-              </div>
-              <div class="product-card-body">
-                <h3 class="product-card-title"><?= htmlspecialchars($related['name']) ?></h3>
-                <div class="product-card-price">
-                  <?php if ($related['discount'] > 0): ?>
-                    PKR <?= number_format($related_final_price) ?>
-                    <span class="product-card-original-price">PKR <?= number_format($related['price']) ?></span>
-                  <?php else: ?>
-                    PKR <?= number_format($related['price']) ?>
-                  <?php endif; ?>
-                </div>
-              </div>
-            </div>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <div class="no-reviews">
-            <i class="fas fa-box-open"></i>
-            <p>No related products found.</p>
-          </div>
-        <?php endif; ?>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p class="footer-text">&copy; <?= date('Y') ?> Slaymart. All rights reserved.</p>
-      <div class="footer-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Contact Us</a>
-      </div>
-    </div>
-  </footer>
   
   <script>
     // Tab functionality
@@ -1077,24 +873,6 @@ $related_res = mysqli_query($conn, $related_sql);
         
         // Change main image
         mainImage.src = thumbnail.getAttribute('data-image');
-      });
-    });
-    
-    // Color and size selection
-    const colorOptions = document.querySelectorAll('.color-option');
-    const sizeOptions = document.querySelectorAll('.size-option');
-    
-    colorOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        colorOptions.forEach(o => o.classList.remove('active'));
-        option.classList.add('active');
-      });
-    });
-    
-    sizeOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        sizeOptions.forEach(o => o.classList.remove('active'));
-        option.classList.add('active');
       });
     });
   </script>

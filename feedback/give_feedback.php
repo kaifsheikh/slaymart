@@ -95,243 +95,122 @@ $orderDetails = $orderResult->fetch_assoc();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --secondary-color: #2575fc;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --star-color: #f5c518;
-            --star-empty: #e0e0e0;
+            --amazon-blue: #131921;
+            --amazon-orange: #FF9900;
+            --amazon-light-orange: #FFD814;
+            --amazon-dark-blue: #232F3E;
+            --amazon-light-gray: #F7F7F7;
+            --amazon-border: #D5D9D9;
+            --amazon-text: #0F1111;
+            --amazon-light-text: #565959;
+            --amazon-star: #FFA41C;
+            --border-radius: 4px;
+            --transition: all 0.2s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--dark-color);
-            min-height: 100vh;
-            padding: 2rem 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: var(--amazon-text);
+            line-height: 1.5;
+            font-size: 14px;
         }
         
         .feedback-container {
-            max-width: 700px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
         }
         
+        /* Header */
+        .page-header {
+            background: var(--amazon-blue);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 400;
+            margin: 0;
+        }
+        
+        /* Feedback Card */
         .feedback-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--amazon-border);
+            margin-bottom: 20px;
             overflow: hidden;
-            position: relative;
         }
         
-        .feedback-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-        }
-        
+        /* Feedback Header */
         .feedback-header {
-            padding: 2.5rem 2rem 1.5rem;
+            padding: 20px;
             text-align: center;
-            background: linear-gradient(135deg, rgba(106, 17, 203, 0.05) 0%, rgba(37, 117, 252, 0.05) 100%);
+            background: var(--amazon-light-gray);
+            border-bottom: 1px solid var(--amazon-border);
         }
         
         .feedback-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--amazon-text);
+            margin-bottom: 10px;
         }
         
         .feedback-subtitle {
-            color: #6c757d;
-            font-size: 1rem;
+            color: var(--amazon-light-text);
+            font-size: 14px;
         }
         
+        /* Feedback Body */
         .feedback-body {
-            padding: 2rem;
+            padding: 30px;
         }
         
-        .rating-section {
-            margin-bottom: 2.5rem;
-        }
-        
-        .rating-label {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            display: block;
-            text-align: center;
-        }
-        
-        .star-rating-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        
-        .star-rating {
-            display: flex;
-            flex-direction: row-reverse; /* This makes the stars fill from right to left */
-            gap: 5px;
-            font-size: 2.5rem;
-        }
-        
-        .star-rating input {
-            display: none;
-        }
-        
-        .star-rating label {
-            cursor: pointer;
-            color: var(--star-empty);
-            transition: all 0.2s ease;
-        }
-        
-        .star-rating input:checked ~ label,
-        .star-rating label:hover,
-        .star-rating label:hover ~ label {
-            color: var(--star-color);
-            transform: scale(1.1);
-        }
-        
-        .rating-text {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-        
-        .feedback-section {
-            margin-bottom: 2.5rem;
-        }
-        
-        .feedback-label {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-        
-        .feedback-textarea {
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            padding: 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            resize: none;
-        }
-        
-        .feedback-textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.25);
-            outline: none;
-        }
-        
-        .feedback-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-        }
-        
-        .btn-back {
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            border-radius: 50px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-        }
-        
-        .btn-back:hover {
-            background: rgba(106, 17, 203, 0.1);
-            color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-        
-        .btn-submit {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
-        }
-        
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
-        }
-        
-        .btn-submit i, .btn-back i {
-            margin-right: 0.5rem;
-        }
-        
-        .alert-custom {
-            border-radius: 15px;
-            border: none;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .alert-success-custom {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .alert-danger-custom {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
-        .alert-icon {
-            font-size: 1.5rem;
-            margin-right: 1rem;
-        }
-        
+        /* Product Info */
         .product-info {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            background: var(--amazon-light-gray);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
+            border: 1px solid var(--amazon-border);
         }
         
         .product-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-right: 1.5rem;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border: 1px solid var(--amazon-border);
+            border-radius: var(--border-radius);
+            padding: 5px;
+            background: white;
+            margin-right: 20px;
         }
         
         .product-details h5 {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+            font-weight: 400;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--amazon-text);
         }
         
         .product-details p {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: var(--amazon-light-text);
+            font-size: 14px;
             margin-bottom: 0;
         }
         
@@ -341,22 +220,172 @@ $orderDetails = $orderResult->fetch_assoc();
         }
         
         .order-id {
-            font-weight: 600;
-            color: var(--primary-color);
+            font-weight: 500;
+            color: var(--amazon-text);
+            font-size: 16px;
         }
         
         .order-date {
-            color: #6c757d;
-            font-size: 0.85rem;
+            color: var(--amazon-light-text);
+            font-size: 14px;
         }
         
+        /* Rating Section */
+        .rating-section {
+            margin-bottom: 30px;
+        }
+        
+        .rating-label {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .star-rating-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse; /* This makes the stars fill from right to left */
+            gap: 5px;
+            font-size: 30px;
+        }
+        
+        .star-rating input {
+            display: none;
+        }
+        
+        .star-rating label {
+            cursor: pointer;
+            color: var(--amazon-border);
+            transition: var(--transition);
+        }
+        
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: var(--amazon-star);
+        }
+        
+        .rating-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--amazon-light-text);
+        }
+        
+        /* Feedback Section */
+        .feedback-section {
+            margin-bottom: 30px;
+        }
+        
+        .feedback-label {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .feedback-textarea {
+            border: 1px solid var(--amazon-border);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            font-size: 14px;
+            transition: var(--transition);
+            resize: none;
+            width: 100%;
+        }
+        
+        .feedback-textarea:focus {
+            border-color: var(--amazon-orange);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+            outline: none;
+        }
+        
+        /* Alert Messages */
+        .alert-custom {
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--amazon-border);
+        }
+        
+        .alert-success-custom {
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
+        }
+        
+        .alert-danger-custom {
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        /* Actions */
+        .feedback-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn-back {
+            background: white;
+            color: var(--amazon-text);
+            border: 1px solid var(--amazon-border);
+            border-radius: var(--border-radius);
+            padding: 12px 20px;
+            font-weight: 400;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .btn-back:hover {
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
+        }
+        
+        .btn-submit {
+            background: var(--amazon-orange);
+            color: var(--amazon-blue);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px 20px;
+            font-weight: 400;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .btn-submit:hover {
+            background: var(--amazon-light-orange);
+        }
+        
+        .btn-back i, .btn-submit i {
+            margin-right: 8px;
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
             .feedback-title {
-                font-size: 1.5rem;
+                font-size: 20px;
             }
             
             .star-rating {
-                font-size: 2rem;
+                font-size: 24px;
             }
             
             .product-info {
@@ -366,18 +395,18 @@ $orderDetails = $orderResult->fetch_assoc();
             
             .product-image {
                 margin-right: 0;
-                margin-bottom: 1rem;
+                margin-bottom: 15px;
             }
             
             .order-info {
                 margin-left: 0;
-                margin-top: 1rem;
+                margin-top: 15px;
                 text-align: center;
             }
             
             .feedback-actions {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 15px;
             }
             
             .btn-back, .btn-submit {
@@ -388,70 +417,87 @@ $orderDetails = $orderResult->fetch_assoc();
     </style>
 </head>
 <body>
-<div class="container my-5">
-    <div class="card shadow-lg p-4">
-        <!-- ✅ Alert Messages -->
-        <?php if (!empty($_GET['msg'])): ?>
-            <div class="alert alert-success">
-                <i class="bi bi-check-circle-fill"></i> <?= htmlspecialchars($_GET['msg']) ?>
-            </div>
-        <?php endif; ?>
-        
-        <?php if (!empty($error)): ?>
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle-fill"></i> <?= $error ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- ✅ Feedback Header -->
-        <div class="text-center mb-4">
-            <h2 class="fw-bold">Share Your Experience</h2>
-            <p class="text-muted">Your feedback helps us improve our products and services</p>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="feedback-container">
+            <h1 class="page-title">Give Feedback</h1>
         </div>
-
-        <!-- ✅ Product and Order Info -->
-        <div class="d-flex align-items-center mb-4">
-            <img src="../images/uploads/<?= htmlspecialchars($product_img) ?>" 
-                 alt="<?= htmlspecialchars($product['name']) ?>" 
-                 class="img-thumbnail me-3" style="width:100px; height:100px; object-fit:cover;">
-            <div>
-                <h5 class="mb-1"><?= htmlspecialchars($product['name']) ?></h5>
-                <p class="mb-0">Order #<?= str_pad($order_id, 6, '0', STR_PAD_LEFT) ?> • 
-                   <?= date("d M Y", strtotime($orderDetails['created_at'])) ?></p>
-            </div>
-        </div>
-
-        <!-- ✅ Feedback Form -->
-        <form method="POST">
-            <!-- Rating -->
-            <div class="mb-3">
-                <label class="form-label fw-semibold">How would you rate this product?</label>
-                <div class="d-flex gap-2 fs-4 text-warning">
-                    <?php for ($i=5; $i>=1; $i--): ?>
-                        <input type="radio" class="btn-check" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
-                        <label class="btn btn-outline-warning" for="star<?= $i ?>"><i class="fa-solid fa-star"></i></label>
-                    <?php endfor; ?>
-                </div>
-            </div>
-
-            <!-- Feedback -->
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Tell us more about your experience</label>
-                <textarea name="feedback" class="form-control" rows="4" placeholder="What did you like or dislike about this product?" required></textarea>
-            </div>
-
-            <!-- Actions -->
-            <div class="d-flex justify-content-between">
-                <a href="../users/my_orders.php" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Back to Orders
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-send"></i> Submit Feedback
-                </button>
-            </div>
-        </form>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <div class="feedback-container">
+        <div class="feedback-card">
+            <!-- Alert Messages -->
+            <?php if (!empty($_GET['msg'])): ?>
+                <div class="alert-custom alert-success-custom">
+                    <i class="fas fa-check-circle alert-icon"></i> <?= htmlspecialchars($_GET['msg']) ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (!empty($error)): ?>
+                <div class="alert-custom alert-danger-custom">
+                    <i class="fas fa-exclamation-triangle alert-icon"></i> <?= $error ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Feedback Header -->
+            <div class="feedback-header">
+                <h2 class="feedback-title">Share Your Experience</h2>
+                <p class="feedback-subtitle">Your feedback helps us improve our products and services</p>
+            </div>
+
+            <!-- Feedback Body -->
+            <div class="feedback-body">
+                <!-- Product and Order Info -->
+                <div class="product-info">
+                    <img src="../images/uploads/<?= htmlspecialchars($product_img) ?>" 
+                         alt="<?= htmlspecialchars($product['name']) ?>" 
+                         class="product-image">
+                    <div class="product-details">
+                        <h5><?= htmlspecialchars($product['name']) ?></h5>
+                        <p>Order #<?= str_pad($order_id, 6, '0', STR_PAD_LEFT) ?></p>
+                    </div>
+                    <div class="order-info">
+                        <div class="order-id"><?= date("d M Y", strtotime($orderDetails['created_at'])) ?></div>
+                    </div>
+                </div>
+
+                <!-- Feedback Form -->
+                <form method="POST">
+                    <!-- Rating -->
+                    <div class="rating-section">
+                        <label class="rating-label">How would you rate this product?</label>
+                        <div class="star-rating-container">
+                            <div class="star-rating">
+                                <?php for ($i=5; $i>=1; $i--): ?>
+                                    <input type="radio" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
+                                    <label for="star<?= $i ?>"><i class="fas fa-star"></i></label>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+                        <div class="rating-text">
+                            <span>Poor</span>
+                            <span>Excellent</span>
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div class="feedback-section">
+                        <label class="feedback-label">Tell us more about your experience</label>
+                        <textarea name="feedback" class="feedback-textarea" rows="4" placeholder="What did you like or dislike about this product?" required></textarea>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="feedback-actions">
+                        <a href="../users/my_orders.php" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Back to Orders
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Submit Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

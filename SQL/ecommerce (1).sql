@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 13, 2025 at 03:38 PM
+-- Generation Time: Sep 16, 2025 at 03:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,21 +29,13 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `banners` (
   `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `subtitle` varchar(255) NOT NULL,
-  `price` decimal(10,2) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `subtitle` varchar(255) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
   `image` varchar(255) NOT NULL,
   `original_name` varchar(255) NOT NULL,
   `status` enum('active','inactive') NOT NULL DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `banners`
---
-
-INSERT INTO `banners` (`id`, `title`, `subtitle`, `price`, `image`, `original_name`, `status`) VALUES
-(8, 'everything in one Shop now', 'Shop Smart – Wide Range of Everyday Essentials', 1000.00, '1756828406_banner.jpg', 'banner.jpg', 'active'),
-(9, 'New gadgets coming soon', 'Shop Smart', 1000.00, '1756899156_Green Watercolour Opening Soon Banner.png', 'Green Watercolour Opening Soon Banner.png', 'active');
 
 -- --------------------------------------------------------
 
@@ -55,17 +47,6 @@ CREATE TABLE `colors` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `colors`
---
-
-INSERT INTO `colors` (`id`, `name`) VALUES
-(11, 'pink'),
-(12, 'purple'),
-(13, 'green'),
-(14, 'red'),
-(15, 'yellow');
 
 -- --------------------------------------------------------
 
@@ -112,8 +93,7 @@ CREATE TABLE `orders` (
   `delivery_type` varchar(50) DEFAULT 'Standard',
   `delivery_charges` decimal(10,2) DEFAULT 0.00,
   `color_id` int(11) DEFAULT NULL,
-  `size_id` int(11) DEFAULT NULL,
-  `stock_status` enum('in','out') DEFAULT 'in'
+  `size_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -133,14 +113,6 @@ CREATE TABLE `products` (
   `stock_status` enum('in','out') DEFAULT 'in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `products`
---
-
-INSERT INTO `products` (`id`, `name`, `category`, `description`, `price`, `discount`, `type`, `stock_status`) VALUES
-(79, 'Shoes for Boys', 'Shoes', 'AI Overview\r\nA shoe is an item of footwear designed to protect, comfort, and support the human foot for various activities and terrains. Shoes typically feature a durable sole, an upper part made of materials like leather or plastic, and a heel. Beyond their functional role, shoes also serve as fashion accessories and can provide safety and injury prevention. ', 2000.00, 50.00, 'exclusive', 'out'),
-(80, 'Digital Watches', 'Watches', 'gkfjdgkldfn', 1000.00, 50.00, 'normal', 'in');
-
 -- --------------------------------------------------------
 
 --
@@ -152,17 +124,6 @@ CREATE TABLE `product_colors` (
   `product_id` int(11) NOT NULL,
   `color_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product_colors`
---
-
-INSERT INTO `product_colors` (`id`, `product_id`, `color_id`) VALUES
-(29, 79, 11),
-(30, 79, 12),
-(31, 79, 13),
-(32, 79, 14),
-(33, 79, 15);
 
 -- --------------------------------------------------------
 
@@ -176,20 +137,6 @@ CREATE TABLE `product_images` (
   `image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `product_images`
---
-
-INSERT INTO `product_images` (`id`, `product_id`, `image`) VALUES
-(158, 79, 'wju56pom.jpg'),
-(159, 79, 'gd5iy2vt.jpg'),
-(160, 79, '57ei63p2.jpg'),
-(161, 79, 'hkbago2d.jpg'),
-(162, 79, 'noqbyv73.jpg'),
-(163, 80, '1pitbu5l.jpg'),
-(164, 80, 'hi5t2pnl.jpg'),
-(165, 80, '0squ3ja4.jpg');
-
 -- --------------------------------------------------------
 
 --
@@ -201,16 +148,6 @@ CREATE TABLE `product_sizes` (
   `product_id` int(11) NOT NULL,
   `size_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product_sizes`
---
-
-INSERT INTO `product_sizes` (`id`, `product_id`, `size_id`) VALUES
-(26, 79, 11),
-(27, 79, 12),
-(28, 79, 13),
-(29, 79, 14);
 
 -- --------------------------------------------------------
 
@@ -228,13 +165,6 @@ CREATE TABLE `reviews` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `reviews`
---
-
-INSERT INTO `reviews` (`id`, `order_id`, `product_id`, `user_id`, `rating`, `feedback`, `created_at`) VALUES
-(26, NULL, 79, 21, 2, 'Good One', '2025-09-13 11:21:34');
-
 -- --------------------------------------------------------
 
 --
@@ -245,16 +175,6 @@ CREATE TABLE `sizes` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `sizes`
---
-
-INSERT INTO `sizes` (`id`, `name`) VALUES
-(11, 'L'),
-(12, 'M'),
-(13, 'XXL'),
-(14, 'S');
 
 -- --------------------------------------------------------
 
@@ -399,7 +319,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `banners`
 --
 ALTER TABLE `banners`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `colors`
@@ -417,37 +337,37 @@ ALTER TABLE `deals`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `product_colors`
 --
 ALTER TABLE `product_colors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `product_images`
 --
 ALTER TABLE `product_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=166;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
 
 --
 -- AUTO_INCREMENT for table `product_sizes`
 --
 ALTER TABLE `product_sizes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `sizes`
@@ -459,7 +379,7 @@ ALTER TABLE `sizes`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `users`

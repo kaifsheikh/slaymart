@@ -29,11 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $delivery_charges = (float)($_POST['delivery_charges'] ?? 250);
     $selected_image   = trim($_POST['selected_image'] ?? '');
     $product_type     = trim($_POST['product_type'] ?? '');
-    
+
     // Get color and size for exclusive products
     $color_id = ($product_type === 'exclusive') ? (int)($_POST['color_id'] ?? 0) : 0;
     $size_id = ($product_type === 'exclusive') ? (int)($_POST['size_id'] ?? 0) : 0;
-    
+
     // Fetch product name and image from product_images table
     if ($product_id > 0) {
         $stmt = $conn->prepare("SELECT p.name, pi.image, p.stock_status 
@@ -52,16 +52,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         $stmt->close();
     }
-    
+
     // If no image is available, use placeholder
     if (empty($selected_image)) {
         $selected_image = 'placeholder.png';
     }
-    
+
     // Calculate totals
     $subtotal = $price * $quantity;
     $total_amount = $subtotal + $delivery_charges;
-    
+
     // ✅ Validation
     if ($fullname === '') $errors[] = "Full Name is required.";
     if ($email === '') $errors[] = "Email is required.";
@@ -69,18 +69,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($address === '') $errors[] = "Address is required.";
     if ($payment_method === '') $errors[] = "Payment method is required.";
     if ($delivery_type === '') $errors[] = "Delivery type is required.";
-    
+
     // Additional validation for exclusive products
     if ($product_type === 'exclusive') {
         if ($color_id <= 0) $errors[] = "Color selection is required for exclusive products.";
         if ($size_id <= 0) $errors[] = "Size selection is required for exclusive products.";
     }
-    
+
     // ✅ Process order if no errors
     if (empty($errors)) {
         // Start transaction
         $conn->begin_transaction();
-        
+
         try {
             if ($payment_method === "COD") {
                 // Insert order with color and size for exclusive products
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     (product_id, user_id, fullname, email, phone, address, quantity, price, 
                      payment_method, note, selected_image, delivery_type, delivery_charges, color_id, size_id) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                
+
                 // Bind params → types: i (int), s (string), d (double/float)
                 $stmt->bind_param(
                     "iissssisssssdii",
@@ -108,23 +108,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $color_id,
                     $size_id
                 );
-                
+
                 if ($stmt->execute()) {
                     $order_id = $stmt->insert_id;
                     $stmt->close();
-                    
-                    // Update stock for exclusive products
-                    if ($product_type === 'exclusive' && $stock_status === 'in') {
-                        // You might want to implement a more sophisticated stock management system
-                        // For now, we'll just set the product to out of stock
-                        $update_stmt = $conn->prepare("UPDATE products SET stock_status = 'out' WHERE id = ?");
-                        $update_stmt->bind_param("i", $product_id);
-                        $update_stmt->execute();
-                        $update_stmt->close();
+
+                    if ($row['stock_status'] === 'in') {
+                        echo "<span class='badge bg-success'>In Stock</span>";
+                    } else {
+                        echo "<span class='badge bg-danger'>Out of Stock</span>";
                     }
-                    
+
                     $conn->commit();
-                    
+
                     // ✅ Redirect to thank you page for COD orders
                     $_SESSION['order_success'] = true;
                     header("Location: thank_you.php");
@@ -171,6 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <!DOCTYPE html>
 <html lang="hi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -179,12 +176,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -192,6 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             padding: 20px;
             color: #333;
         }
+
         .processing-container {
             background: white;
             border-radius: 20px;
@@ -202,61 +200,81 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             margin: 40px auto;
             text-align: center;
         }
+
         .processing-header {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             padding: 25px 20px;
             text-align: center;
         }
+
         .processing-header h1 {
             font-weight: 700;
             margin-bottom: 5px;
             font-size: 2rem;
         }
+
         .processing-header p {
             opacity: 0.9;
             font-size: 1rem;
         }
+
         .processing-body {
             padding: 30px;
         }
+
         .processing-icon {
             font-size: 4rem;
             color: #667eea;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         .processing-title {
             font-size: 1.8rem;
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 15px;
         }
+
         .processing-message {
             font-size: 1rem;
             color: #7f8c8d;
             margin-bottom: 30px;
         }
+
         .alert {
             border-radius: 15px;
             padding: 15px 20px;
             margin-bottom: 20px;
             border: none;
         }
+
         .alert-danger {
             background-color: #fff5f5;
             color: #e53e3e;
         }
+
         .alert-danger ul {
             margin: 0;
             padding-left: 20px;
             text-align: left;
         }
+
         .btn {
             border-radius: 10px;
             font-weight: 600;
@@ -265,49 +283,59 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             text-decoration: none;
             display: inline-block;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
             color: white;
         }
+
         .btn-outline-secondary {
             background: white;
             color: #6c757d;
             border: 1px solid #dee2e6;
         }
+
         .btn-outline-secondary:hover {
             background: #f8f9fa;
             color: #495057;
         }
+
         .error-icon {
             color: #e53e3e;
             font-size: 3rem;
             margin-bottom: 15px;
         }
+
         .buttons-container {
             display: flex;
             gap: 15px;
             justify-content: center;
             margin-top: 30px;
         }
+
         @media (max-width: 768px) {
             .processing-container {
                 margin: 20px auto;
             }
+
             .processing-body {
                 padding: 20px;
             }
+
             .buttons-container {
                 flex-direction: column;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="processing-container">
         <div class="processing-header">
@@ -344,4 +372,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 </body>
+
 </html>

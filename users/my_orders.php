@@ -26,9 +26,23 @@ $result = mysqli_query($conn, $query);
     <title>Slaymart - My Orders</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --amazon-blue: #131921;
+            --amazon-orange: #FF9900;
+            --amazon-light-orange: #FFD814;
+            --amazon-dark-blue: #232F3E;
+            --amazon-light-gray: #F7F7F7;
+            --amazon-border: #D5D9D9;
+            --amazon-text: #0F1111;
+            --amazon-light-text: #565959;
+            --amazon-star: #FFA41C;
+            --border-radius: 4px;
+            --transition: all 0.2s ease;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -36,114 +50,114 @@ $result = mysqli_query($conn, $query);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: var(--amazon-text);
+            line-height: 1.5;
+            font-size: 14px;
         }
 
         .orders-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
+        /* Header */
         .page-header {
-            background: white;
-            border-radius: 15px;
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background: var(--amazon-blue);
+            color: white;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: var(--border-radius);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
         }
 
         .page-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 400;
             margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .page-title i {
-            color: #667eea;
         }
 
         .back-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: var(--amazon-orange);
+            color: var(--amazon-blue);
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 400;
+            transition: var(--transition);
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            text-decoration: none;
+            font-size: 14px;
         }
 
         .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            color: white;
+            background: var(--amazon-light-orange);
+            color: var(--amazon-blue);
         }
 
+        /* Orders Card */
         .orders-card {
             background: white;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
+            box-shadow: none;
+            margin-bottom: 20px;
+            border: 1px solid var(--amazon-border);
         }
 
         .orders-card-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 25px;
-            font-weight: 600;
-            font-size: 1.1rem;
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
+            padding: 14px 20px;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 1px solid var(--amazon-border);
         }
 
         .table-container {
             overflow-x: auto;
         }
 
+        /* Orders Table */
         .orders-table {
             width: 100%;
             border-collapse: collapse;
         }
 
         .orders-table thead th {
-            background: #f8f9fa;
-            color: #2c3e50;
-            font-weight: 600;
-            padding: 15px;
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
+            font-weight: 500;
+            padding: 12px 15px;
             text-align: left;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e9ecef;
+            font-size: 14px;
+            border-bottom: 1px solid var(--amazon-border);
         }
 
         .orders-table tbody tr {
-            border-bottom: 1px solid #f1f3f5;
-            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--amazon-border);
+            transition: var(--transition);
         }
 
         .orders-table tbody tr:hover {
-            background-color: #f8f9fa;
+            background-color: var(--amazon-light-gray);
         }
 
         .orders-table tbody td {
-            padding: 15px;
+            padding: 12px 15px;
             vertical-align: middle;
         }
 
+        /* Product Info */
         .product-info {
             display: flex;
             align-items: center;
@@ -151,83 +165,93 @@ $result = mysqli_query($conn, $query);
         }
 
         .product-thumb {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border: 1px solid var(--amazon-border);
+            border-radius: var(--border-radius);
+            padding: 5px;
+            background: white;
         }
 
         .product-name {
-            font-weight: 500;
-            color: #2c3e50;
+            font-weight: 400;
+            color: var(--amazon-text);
             margin: 0;
-            font-size: 0.95rem;
+            font-size: 14px;
             line-height: 1.4;
         }
 
+        /* Status Badges */
         .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: var(--border-radius);
+            font-size: 12px;
+            font-weight: 400;
             text-align: center;
             display: inline-block;
-            min-width: 90px;
+            min-width: 80px;
         }
 
         .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: #F0AD4E;
+            color: white;
         }
 
         .status-success {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #5CB85C;
+            color: white;
         }
 
         .status-danger {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #D9534F;
+            color: white;
         }
 
         .status-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
+            background-color: #5BC0DE;
+            color: white;
         }
 
+        /* Feedback Button */
         .feedback-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: var(--amazon-orange);
+            color: var(--amazon-blue);
             border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
+            font-size: 12px;
+            font-weight: 400;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
         }
 
         .feedback-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            color: white;
+            background: var(--amazon-light-orange);
+            color: var(--amazon-blue);
         }
 
+        /* Empty Orders */
         .empty-orders {
             text-align: center;
             padding: 60px 20px;
-            color: #6c757d;
+            color: var(--amazon-light-text);
+            background: white;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--amazon-border);
         }
 
         .empty-orders i {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 20px;
-            color: #dee2e6;
+            color: var(--amazon-light-text);
         }
 
         .empty-orders h4 {
-            font-weight: 600;
+            font-weight: 400;
             margin-bottom: 15px;
+            font-size: 20px;
         }
 
         .empty-orders p {
@@ -237,27 +261,25 @@ $result = mysqli_query($conn, $query);
 
         .empty-orders .btn {
             margin-top: 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--amazon-orange);
             border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            color: var(--amazon-blue);
+            font-weight: 400;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .empty-orders .btn:hover {
-            background: linear-gradient(135deg, #5a67d8, #6b5b95);
-            color: white;
+            background: var(--amazon-light-orange);
+            color: var(--amazon-blue);
         }
 
         /* Mobile Responsive Styles */
         @media (max-width: 991px) {
             .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
+                padding: 15px 20px;
             }
 
             .orders-table thead {
@@ -272,12 +294,11 @@ $result = mysqli_query($conn, $query);
 
             .orders-table tbody tr {
                 display: block;
-                margin-bottom: 20px;
-                border: 1px solid #e9ecef;
-                border-radius: 10px;
+                margin-bottom: 15px;
+                border: 1px solid var(--amazon-border);
+                border-radius: var(--border-radius);
                 padding: 15px;
                 background: white;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .orders-table tbody td {
@@ -295,8 +316,8 @@ $result = mysqli_query($conn, $query);
                 left: 0;
                 width: 35%;
                 padding-right: 10px;
-                font-weight: 600;
-                color: #6c757d;
+                font-weight: 500;
+                color: var(--amazon-light-text);
                 text-align: left;
             }
 
@@ -310,40 +331,40 @@ $result = mysqli_query($conn, $query);
         }
 
         @media (max-width: 576px) {
-            body {
-                padding: 10px;
+            .orders-container {
+                padding: 0 10px;
             }
 
             .page-header {
-                padding: 20px;
+                padding: 12px 15px;
             }
 
             .page-title {
-                font-size: 1.3rem;
+                font-size: 20px;
             }
 
             .product-thumb {
-                width: 50px;
-                height: 50px;
+                width: 60px;
+                height: 60px;
             }
 
             .status-badge {
-                min-width: 80px;
-                font-size: 0.75rem;
+                min-width: 70px;
+                font-size: 11px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="orders-container">
-        <div class="page-header">
-            <h1 class="page-title"><i class="fas fa-shopping-bag"></i> My Orders</h1>
-            <a href="../index.php" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back to Shopping
-            </a>
-        </div>
+    <div class="page-header">
+        <h1 class="page-title">My Orders</h1>
+        <a href="../index.php" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Shopping
+        </a>
+    </div>
 
+    <div class="orders-container">
         <div class="orders-card">
             <div class="orders-card-header">
                 Order History
@@ -447,7 +468,7 @@ $result = mysqli_query($conn, $query);
                         <i class="fas fa-shopping-cart"></i>
                         <h4>No Orders Yet</h4>
                         <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
-                        <a href="../index.php" class="btn btn-primary">
+                        <a href="../index.php" class="btn">
                             <i class="fas fa-shopping-bag me-2"></i> Start Shopping
                         </a>
                     </div>

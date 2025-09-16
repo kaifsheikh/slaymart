@@ -120,13 +120,13 @@
             <div class="product-box">
                 <div class="product-box" id="product-list">
                     <?php
-                    $query = "SELECT p.*, ROUND(AVG(f.rating), 1) AS avg_rating
+                        $query = "SELECT p.*, ROUND(AVG(f.rating), 1) AS avg_rating
                             FROM products p
                             LEFT JOIN reviews f ON p.id = f.product_id
                             WHERE p.type = 'normal'
                             GROUP BY p.id
                             ORDER BY p.id DESC";
-                    $result = mysqli_query($conn, $query);
+                            $result = mysqli_query($conn, $query);
                     ?>
 
                     <div class="product-main">
@@ -287,6 +287,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 </main>

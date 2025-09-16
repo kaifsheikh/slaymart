@@ -53,12 +53,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slaymart - Login</title>
+    <title>Login - Slaymart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="../images/logo/favicon.png" type="image/x-icon">
     <style>
+        :root {
+            --amazon-orange: #FF9900;
+            --amazon-dark: #131921;
+            --amazon-blue: #232F3E;
+            --amazon-light: #F7F7F7;
+            --amazon-gray: #DDDDDD;
+            --text-dark: #0F1111;
+            --text-light: #565959;
+            --error-color: #CC0C39;
+            --success-color: #007600;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -67,30 +79,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            background-color: var(--amazon-light);
+            color: var(--text-dark);
+            line-height: 1.5;
         }
 
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 100%;
-            max-width: 900px;
+        /* Header Section */
+        .header {
+            background-color: var(--amazon-dark);
+            padding: 15px 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
-            min-height: 600px;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-right: 25px;
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .logo-text span {
+            color: var(--amazon-orange);
+        }
+
+        .logo img {
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .header-divider {
+            height: 30px;
+            width: 1px;
+            background-color: var(--amazon-gray);
+            margin: 0 15px;
+        }
+
+        .header-text {
+            color: #CCC;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        .login-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
         .login-image {
             flex: 1;
-            background: url('https://picsum.photos/seed/slaymart/600/900') center/cover;
+            min-width: 300px;
+            background: url('https://images.unsplash.com/photo-1579546929662-711aa81148cf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover;
             position: relative;
-            display: none;
         }
 
         .login-image::before {
@@ -100,238 +160,200 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            background: linear-gradient(90deg, rgba(19, 25, 33, 0.8) 0%, rgba(35, 47, 62, 0.6) 100%);
         }
 
         .image-content {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
             color: white;
             z-index: 1;
         }
 
         .image-content h1 {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
             font-weight: 700;
         }
 
         .image-content p {
             font-size: 1.1rem;
-            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 400px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .benefit-item i {
+            color: var(--amazon-orange);
+            font-size: 1.2rem;
+            margin-right: 15px;
+            width: 20px;
         }
 
         .login-form {
             flex: 1;
-            padding: 60px 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logo h1 {
-            color: #667eea;
-            font-size: 2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .logo h1 i {
-            font-size: 2.5rem;
+            min-width: 300px;
+            padding: 40px;
         }
 
         .form-header {
-            text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
-        .form-header h2 {
-            color: #2c3e50;
+        .form-header h1 {
             font-size: 1.8rem;
+            font-weight: 500;
             margin-bottom: 10px;
         }
 
         .form-header p {
-            color: #7f8c8d;
+            color: var(--text-light);
             font-size: 0.95rem;
         }
 
         .form-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            color: #2c3e50;
             font-weight: 500;
             margin-bottom: 8px;
             font-size: 0.9rem;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-
         .form-control {
             width: 100%;
-            padding: 15px 15px 15px 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid var(--amazon-gray);
+            border-radius: 4px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            transition: all 0.2s ease;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--amazon-orange);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+        }
+
+        .form-control.error {
+            border-color: var(--error-color);
         }
 
         .password-requirements {
             font-size: 0.8rem;
-            color: #7f8c8d;
+            color: var(--text-light);
             margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
         .btn-login {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            padding: 12px;
+            background-color: var(--amazon-orange);
+            color: var(--text-dark);
             border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            border-radius: 4px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 25px;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            margin-bottom: 20px;
         }
 
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            background-color: #e88b00;
         }
 
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .signup-link {
+        .divider {
             text-align: center;
-            color: #7f8c8d;
-            font-size: 0.95rem;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--amazon-gray);
+        }
+
+        .divider span {
+            background-color: white;
+            padding: 0 15px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .new-account {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--amazon-gray);
             margin-top: 20px;
         }
 
-        .signup-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
+        .new-account p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
         }
 
-        .signup-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-
-        .security-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-            color: #27ae60;
-            font-size: 0.85rem;
-        }
-
-        .security-badge i {
+        .btn-create {
+            width: 100%;
+            padding: 10px;
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--amazon-gray);
+            border-radius: 4px;
             font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-create:hover {
+            background-color: var(--amazon-light);
         }
 
         /* Error Messages Styling */
         .error-container {
-            background: #fff5f5;
-            border: 1px solid #fed7d7;
-            border-radius: 10px;
-            padding: 15px;
+            background-color: #fff5f5;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 12px 15px;
             margin-bottom: 20px;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
         }
 
         .error-container ul {
             margin: 0;
             padding-left: 20px;
-            color: #e53e3e;
+            color: var(--error-color);
         }
 
         .error-container li {
             margin-bottom: 5px;
         }
 
-        /* Input Validation Styles */
-        .form-control.error {
-            border-color: #e53e3e;
-            background: #fff5f5;
-        }
-
-        .form-control.success {
-            border-color: #27ae60;
-            background: #f0fff4;
-        }
-
-        /* Responsive Design */
-        @media (min-width: 768px) {
-            .login-image {
-                display: block;
-            }
-            
-            .login-form {
-                padding: 60px;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .login-container {
-                max-width: 100%;
-                min-height: auto;
-            }
-            
-            .login-form {
-                padding: 40px 30px;
-            }
+        .field-error {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 5px;
         }
 
         /* Loading Animation */
@@ -349,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             left: 50%;
             margin-left: -10px;
             margin-top: -10px;
-            border: 2px solid #ffffff;
+            border: 2px solid var(--text-dark);
             border-radius: 50%;
             border-top-color: transparent;
             animation: spinner 0.8s linear infinite;
@@ -358,25 +380,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         @keyframes spinner {
             to { transform: rotate(360deg); }
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-image {
+                display: none;
+            }
+            
+            .login-form {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-text {
+                display: none;
+            }
+            
+            .form-header h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-container">
+            <a href="../index.php" class="logo">
+                <div class="logo-text">Slay<span>mart</span></div>
+            </a>
+            <div class="header-divider"></div>
+            <div class="header-text">Login to your account</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
     <div class="login-container">
         <div class="login-image">
             <div class="image-content">
-                <h1>Welcome Back!</h1>
-                <p>Login to continue your shopping experience</p>
+                <h1>Welcome to Slaymart</h1>
+                <p>Sign in to access your personalized shopping experience, track orders, and more.</p>
+                
+                <div class="benefit-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Fast and reliable delivery</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure payment methods</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <i class="fas fa-undo"></i>
+                    <span>Easy returns and refunds</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <i class="fas fa-tag"></i>
+                    <span>Exclusive deals and offers</span>
+                </div>
             </div>
         </div>
         
         <div class="login-form">
-            <div class="logo">
-                <h1><i class="fas fa-shopping-bag"></i> Slaymart</h1>
-            </div>
-            
             <div class="form-header">
-                <h2>Login to Your Account</h2>
-                <p>Enter your credentials to access your account</p>
+                <h1>Sign in</h1>
+                <p>Enter your email and password to access your account</p>
             </div>
             
             <form method="POST" action="" id="loginForm">
@@ -392,35 +463,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
                 
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>" required>
-                    </div>
+                    <label for="email">Email</label>
+                    <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>" required>
+                    <div id="email-error" class="field-error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
-                    </div>
-                    <div class="password-requirements">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Must be at least 6 characters</span>
-                    </div>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    <div class="password-requirements">Minimum 6 characters</div>
+                    <div id="password-error" class="field-error"></div>
                 </div>
                 
-                <button type="submit" class="btn-login">Sign In</button>
+                <button type="submit" class="btn-login">Continue</button>
             </form>
             
-            <div class="signup-link">
-                Don't have an account? <a href="register.php">Sign up here</a>
+            <div class="divider">
+                <span>New to Slaymart?</span>
             </div>
             
-            <div class="security-badge">
-                <i class="fas fa-shield-alt"></i>
-                <span>Your data is safe and secure with us</span>
+            <div class="new-account">
+                <p>Create an account to enjoy personalized shopping experience</p>
+                <a href="register.php" class="btn-create">Create your Slaymart account</a>
             </div>
         </div>
     </div>
@@ -439,30 +503,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email) {
-                showError('email', 'Email is required');
+                showFieldError('email', 'Email is required');
                 isValid = false;
             } else if (!emailRegex.test(email)) {
-                showError('email', 'Please enter a valid email');
+                showFieldError('email', 'Please enter a valid email');
                 isValid = false;
             } else if (email.length > 100) {
-                showError('email', 'Email is too long');
+                showFieldError('email', 'Email is too long');
                 isValid = false;
             } else {
-                showSuccess('email');
+                clearFieldError('email');
             }
             
             // Password validation
             if (!password) {
-                showError('password', 'Password is required');
+                showFieldError('password', 'Password is required');
                 isValid = false;
             } else if (password.length < 6) {
-                showError('password', 'Password must be at least 6 characters');
+                showFieldError('password', 'Password must be at least 6 characters');
                 isValid = false;
             } else if (password.length > 50) {
-                showError('password', 'Password is too long');
+                showFieldError('password', 'Password is too long');
                 isValid = false;
             } else {
-                showSuccess('password');
+                clearFieldError('password');
             }
             
             if (!isValid) {
@@ -481,13 +545,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
             if (!email) {
-                resetField('email');
+                clearFieldError('email');
             } else if (!emailRegex.test(email)) {
-                showError('email', 'Please enter a valid email');
+                showFieldError('email', 'Please enter a valid email');
             } else if (email.length > 100) {
-                showError('email', 'Email is too long');
+                showFieldError('email', 'Email is too long');
             } else {
-                showSuccess('email');
+                clearFieldError('email');
             }
         });
         
@@ -495,72 +559,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const password = this.value;
             
             if (!password) {
-                resetField('password');
+                clearFieldError('password');
             } else if (password.length < 6) {
-                showError('password', 'Password must be at least 6 characters');
+                showFieldError('password', 'Password must be at least 6 characters');
             } else if (password.length > 50) {
-                showError('password', 'Password is too long');
+                showFieldError('password', 'Password is too long');
             } else {
-                showSuccess('password');
+                clearFieldError('password');
             }
         });
         
         // Validation helper functions
-        function showError(fieldId, message) {
+        function showFieldError(fieldId, message) {
             const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + '-error');
+            
             field.classList.add('error');
-            field.classList.remove('success');
-            
-            // Remove existing error message if any
-            const existingError = field.parentElement.querySelector('.field-error');
-            if (existingError) {
-                existingError.remove();
-            }
-            
-            // Add error message
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'field-error';
-            errorDiv.style.color = '#e53e3e';
-            errorDiv.style.fontSize = '0.8rem';
-            errorDiv.style.marginTop = '5px';
-            errorDiv.textContent = message;
-            field.parentElement.appendChild(errorDiv);
+            errorElement.textContent = message;
         }
         
-        function showSuccess(fieldId) {
+        function clearFieldError(fieldId) {
             const field = document.getElementById(fieldId);
-            field.classList.add('success');
+            const errorElement = document.getElementById(fieldId + '-error');
+            
             field.classList.remove('error');
-            
-            // Remove error message if exists
-            const existingError = field.parentElement.querySelector('.field-error');
-            if (existingError) {
-                existingError.remove();
-            }
+            errorElement.textContent = '';
         }
-        
-        function resetField(fieldId) {
-            const field = document.getElementById(fieldId);
-            field.classList.remove('error', 'success');
-            
-            // Remove error message if exists
-            const existingError = field.parentElement.querySelector('.field-error');
-            if (existingError) {
-                existingError.remove();
-            }
-        }
-        
-        // Input focus effects
-        const inputs = document.querySelectorAll('.form-control');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.querySelector('i').style.color = '#667eea';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.querySelector('i').style.color = '#7f8c8d';
-            });
-        });
     </script>
 </body>
 </html>

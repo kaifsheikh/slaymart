@@ -10,9 +10,15 @@ if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $subtitle = mysqli_real_escape_string($conn, $_POST['subtitle']);
-    $price = mysqli_real_escape_string($conn, $_POST['price']);
+    // $title = mysqli_real_escape_string($conn, $_POST['title']);
+    // $subtitle = mysqli_real_escape_string($conn, $_POST['subtitle']);
+    // $price = mysqli_real_escape_string($conn, $_POST['price']);
+
+    $title = !empty($_POST['title']) ? mysqli_real_escape_string($conn, $_POST['title']) : NULL;
+$subtitle = !empty($_POST['subtitle']) ? mysqli_real_escape_string($conn, $_POST['subtitle']) : NULL;
+$price = !empty($_POST['price']) ? mysqli_real_escape_string($conn, $_POST['price']) : NULL;
+
+
     $imageDBPath = "";
     $originalName = "";
     if (!empty($_FILES['image']['name'])) {
@@ -28,8 +34,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         die("Please upload an image for the banner.");
     }
+
     $query = "INSERT INTO banners (title, subtitle, price, image, original_name, status) 
-              VALUES ('$title', '$subtitle', '$price', '$imageDBPath', '$originalName', 'active')";
+          VALUES (" .
+          ($title ? "'$title'" : "NULL") . ", " .
+          ($subtitle ? "'$subtitle'" : "NULL") . ", " .
+          ($price ? "'$price'" : "NULL") . ", " .
+          "'$imageDBPath', '$originalName', 'active')";
+
+
     mysqli_query($conn, $query) or die("DB Error: " . mysqli_error($conn));
     echo "<script>alert('✅ Banner added successfully!'); window.location='view-banners.php';</script>";
 }
@@ -276,12 +289,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="title" class="form-label">Banner Title <span class="required-mark">*</span></label>
-            <input type="text" class="form-control" id="title" name="title" required>
+            <input type="text" class="form-control" id="title" name="title">
             <div class="invalid-feedback">Please enter banner title.</div>
           </div>
           <div class="col-md-6">
             <label for="subtitle" class="form-label">Subtitle <span class="required-mark">*</span></label>
-            <input type="text" class="form-control" id="subtitle" name="subtitle" required>
+            <input type="text" class="form-control" id="subtitle" name="subtitle">
             <div class="invalid-feedback">Please enter subtitle.</div>
           </div>
         </div>
@@ -290,7 +303,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <label for="price" class="form-label">Price <span class="required-mark">*</span></label>
           <div class="input-group">
             <span class="input-group-text">$</span>
-            <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+            <input type="number" step="0.01" class="form-control" id="price" name="price">
             <div class="invalid-feedback">Please enter price.</div>
           </div>
         </div>

@@ -15,9 +15,23 @@ $delivery_charges = isset($order['delivery_charges']) ? $order['delivery_charges
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slaymart - Payment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --amazon-blue: #131921;
+            --amazon-orange: #FF9900;
+            --amazon-light-orange: #FFD814;
+            --amazon-dark-blue: #232F3E;
+            --amazon-light-gray: #F7F7F7;
+            --amazon-border: #D5D9D9;
+            --amazon-text: #0F1111;
+            --amazon-light-text: #565959;
+            --amazon-star: #FFA41C;
+            --border-radius: 4px;
+            --transition: all 0.2s ease;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -25,63 +39,63 @@ $delivery_charges = isset($order['delivery_charges']) ? $order['delivery_charges
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: #333;
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: var(--amazon-text);
+            line-height: 1.5;
+            font-size: 14px;
         }
 
         .payment-container {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            animation: slideUp 0.6s ease-out;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Header */
+        .page-header {
+            background: var(--amazon-blue);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        /* Main Content */
+        .payment-card {
+            background: white;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--amazon-border);
+            margin-bottom: 20px;
+            overflow: hidden;
         }
 
         .payment-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 25px 30px;
-            text-align: center;
-        }
-
-        .payment-header h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
+            padding: 14px 20px;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 1px solid var(--amazon-border);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .payment-header p {
-            opacity: 0.9;
-            margin: 0;
+        .payment-header i {
+            color: var(--amazon-orange);
         }
 
         .payment-body {
             padding: 30px;
         }
 
+        /* Payment Methods */
         .payment-methods {
             display: flex;
             justify-content: space-between;
@@ -92,147 +106,174 @@ $delivery_charges = isset($order['delivery_charges']) ? $order['delivery_charges
         .payment-method {
             flex: 1;
             text-align: center;
-            padding: 15px 10px;
-            border-radius: 12px;
-            background: #f8f9fa;
-            border: 2px solid transparent;
+            padding: 20px 15px;
+            border-radius: var(--border-radius);
+            background: white;
+            border: 1px solid var(--amazon-border);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .payment-method:hover {
-            border-color: #667eea;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+            border-color: var(--amazon-orange);
         }
 
         .payment-method.active {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--amazon-orange);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
         }
 
         .payment-method i {
-            font-size: 2rem;
-            color: #667eea;
-            margin-bottom: 8px;
+            font-size: 28px;
+            color: var(--amazon-orange);
+            margin-bottom: 10px;
         }
 
         .payment-method h6 {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 5px;
-            font-size: 0.9rem;
+            font-size: 16px;
+            color: var(--amazon-text);
         }
 
         .payment-method p {
-            font-size: 0.8rem;
-            color: #6c757d;
+            font-size: 14px;
+            color: var(--amazon-light-text);
             margin: 0;
         }
 
+        /* Payment Details */
         .payment-details {
-            background: #f8f9fa;
-            border-radius: 15px;
+            background: var(--amazon-light-gray);
+            border-radius: var(--border-radius);
             padding: 20px;
             margin-bottom: 25px;
+            border: 1px solid var(--amazon-border);
         }
 
         .payment-details h5 {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 15px;
-            color: #2c3e50;
+            color: var(--amazon-text);
+            font-size: 16px;
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .payment-details h5 i {
+            color: var(--amazon-orange);
         }
 
         .payment-details p {
             margin-bottom: 10px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
+            font-size: 14px;
+            color: var(--amazon-text);
         }
 
         .payment-details p:last-child {
             margin-bottom: 0;
         }
 
-        .payment-details i {
-            color: #667eea;
+        .payment-details p i {
+            color: var(--amazon-orange);
             width: 20px;
             text-align: center;
+            margin-top: 3px;
         }
 
+        /* Form Styles */
         .form-label {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 8px;
-            color: #2c3e50;
+            color: var(--amazon-text);
+            font-size: 14px;
         }
 
         .form-control {
-            border-radius: 10px;
-            border: 1px solid #e1e5e9;
-            padding: 12px 15px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--amazon-border);
+            padding: 10px 12px;
+            font-size: 14px;
+            transition: var(--transition);
+            background-color: white;
         }
 
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--amazon-orange);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+            background-color: white;
         }
 
+        /* Total Amount */
         .total-amount {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
             padding: 15px 20px;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             text-align: center;
             margin: 25px 0;
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 500;
+            border: 1px solid var(--amazon-border);
         }
 
+        .total-amount strong {
+            font-size: 20px;
+            color: var(--amazon-text);
+        }
+
+        /* Buttons */
         .btn {
-            border-radius: 10px;
-            font-weight: 600;
-            padding: 12px 20px;
-            transition: all 0.3s ease;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: var(--transition);
             border: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: var(--amazon-orange);
+            color: var(--amazon-blue);
             width: 100%;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            color: white;
+            background: var(--amazon-light-orange);
+            color: var(--amazon-blue);
         }
 
         .btn-secondary {
-            background: #f8f9fa;
-            color: #6c757d;
+            background: white;
+            color: var(--amazon-text);
+            border: 1px solid var(--amazon-border);
             width: 100%;
             margin-top: 15px;
         }
 
         .btn-secondary:hover {
-            background: #e9ecef;
-            color: #495057;
+            background: var(--amazon-light-gray);
+            color: var(--amazon-text);
         }
 
+        /* Error Message */
         .error-message {
-            color: #e74c3c;
-            font-size: 0.85rem;
+            color: #B12704;
+            font-size: 12px;
             margin-top: 5px;
             display: none;
         }
 
         .form-control.error {
-            border-color: #e74c3c;
+            border-color: #B12704;
         }
 
         .form-control.error + .error-message {
@@ -240,24 +281,11 @@ $delivery_charges = isset($order['delivery_charges']) ? $order['delivery_charges
         }
 
         .form-control.success {
-            border-color: #27ae60;
+            border-color: #007600;
         }
 
         /* Responsive Design */
-        @media (max-width: 576px) {
-            .payment-container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            .payment-header {
-                padding: 20px;
-            }
-            
-            .payment-header h2 {
-                font-size: 1.5rem;
-            }
-            
+        @media (max-width: 768px) {
             .payment-body {
                 padding: 20px;
             }
@@ -271,76 +299,111 @@ $delivery_charges = isset($order['delivery_charges']) ? $order['delivery_charges
                 align-items: center;
                 text-align: left;
                 gap: 15px;
-                padding: 12px 15px;
+                padding: 15px;
             }
             
             .payment-method i {
-                font-size: 1.5rem;
+                font-size: 24px;
             }
             
             .payment-method h6 {
                 margin-bottom: 0;
             }
         }
+        
+        @media (max-width: 576px) {
+            .payment-container {
+                padding: 0 10px;
+            }
+            
+            .page-header {
+                padding: 12px 15px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .payment-header {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .payment-body {
+                padding: 15px;
+            }
+            
+            .payment-details p {
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
-<body>
-    <div class="payment-container">
-        <div class="payment-header">
-            <h2><i class="fas fa-credit-card"></i> Complete Payment</h2>
-            <p>Please complete your payment to confirm your order</p>
-        </div>
-        
-        <div class="payment-body">
-            <!-- Payment Methods -->
-            <div class="payment-methods">
-                <div class="payment-method active">
-                    <i class="fas fa-mobile-alt"></i>
-                    <h6>EasyPaisa</h6>
-                    <p>0312-8913161</p>
-                </div>
-                <div class="payment-method">
-                    <i class="fas fa-university"></i>
-                    <h6>Bank Transfer</h6>
-                    <p>PK123456789</p>
-                </div>
-            </div>
-            
-            <!-- Payment Details -->
-            <div class="payment-details">
-                <h5><i class="fas fa-info-circle"></i> Payment Instructions</h5>
-                <p><i class="fas fa-arrow-right"></i> Send the exact amount to the provided account</p>
-                <p><i class="fas fa-arrow-right"></i> Use your Order ID as the payment reference</p>
-                <p><i class="fas fa-arrow-right"></i> Transaction ID is required to verify your payment</p>
-                <p><i class="fas fa-arrow-right"></i> Payment confirmation may take up to 24 hours</p>
-            </div>
-            
-            <form action="save_transaction.php" method="POST" id="paymentForm" novalidate>
-                <input type="hidden" name="price" value="<?php echo $total_amount; ?>">
-                <input type="hidden" name="delivery_charges" value="<?php echo $order['delivery_charges']; ?>">
-                
-                <!-- In your transaction_form.php, add these hidden fields -->
-                <input type="hidden" name="color_id" value="<?php echo isset($order['color_id']) ? $order['color_id'] : 0; ?>">
-                <input type="hidden" name="size_id" value="<?php echo isset($order['size_id']) ? $order['size_id'] : 0; ?>">
 
-                <div class="mb-3">
-                    <label for="transaction_id" class="form-label">Transaction ID</label>
-                    <input type="text" name="transaction_id" id="transaction_id" class="form-control" placeholder="Enter your transaction ID" required>
-                    <div class="error-message">Please enter a valid transaction ID</div>
+<body>
+    <div class="page-header">
+        <div class="payment-container">
+            <h1 class="page-title">Payment</h1>
+        </div>
+    </div>
+    
+    <div class="payment-container">
+        <div class="payment-card">
+            <div class="payment-header">
+                <i class="fas fa-credit-card"></i> Complete Payment
+            </div>
+            
+            <div class="payment-body">
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <div class="payment-method active">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h6>EasyPaisa</h6>
+                        <p>+(92) 312-8913161</p>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fas fa-university"></i>
+                        <h6>Bank Transfer</h6>
+                        <p>55270081006982018</p>
+                    </div>
                 </div>
                 
-                <div class="total-amount">
-                    Total Amount: Rs. <?php echo number_format($total_amount); ?>
+                <!-- Payment Details -->
+                <div class="payment-details">
+                    <h5><i class="fas fa-info-circle"></i> Payment Instructions</h5>
+                    <p><i class="fas fa-arrow-right"></i> Send the exact amount to the provided account</p>
+                    <p><i class="fas fa-arrow-right"></i> Use your Order ID as the payment reference</p>
+                    <p><i class="fas fa-arrow-right"></i> Transaction ID is required to verify your payment</p>
+                    <p><i class="fas fa-arrow-right"></i> Payment confirmation may take up to 24 hours</p>
                 </div>
                 
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-check-circle me-2"></i> Submit Payment
-                </button>
-                
-                <a href="checkout.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i> Back to Checkout
-                </a>
-            </form>
+                <form action="save_transaction.php" method="POST" id="paymentForm" novalidate>
+                    <input type="hidden" name="price" value="<?php echo $total_amount; ?>">
+                    <input type="hidden" name="delivery_charges" value="<?php echo $order['delivery_charges']; ?>">
+                    
+                    <!-- Hidden fields for color and size -->
+                    <input type="hidden" name="color_id" value="<?php echo isset($order['color_id']) ? $order['color_id'] : 0; ?>">
+                    <input type="hidden" name="size_id" value="<?php echo isset($order['size_id']) ? $order['size_id'] : 0; ?>">
+
+                    <div class="mb-3">
+                        <label for="transaction_id" class="form-label">Transaction ID</label>
+                        <input type="text" name="transaction_id" id="transaction_id" class="form-control" placeholder="Enter your transaction ID" required>
+                        <div class="error-message">Please enter a valid transaction ID</div>
+                    </div>
+                    
+                    <div class="total-amount">
+                        Total Amount: <strong>Rs. <?php echo number_format($total_amount); ?></strong>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Submit Payment
+                    </button>
+                    
+                    <a href="checkout.php" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Checkout
+                    </a>
+                </form>
+            </div>
         </div>
     </div>
 
