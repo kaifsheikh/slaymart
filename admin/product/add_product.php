@@ -46,7 +46,8 @@ if (isset($_POST['add'])) {
             }
 
             // Image upload
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/images/uploads/";
+            // $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/images/uploads/";
+            $uploadDir = __DIR__ . "/../../images/uploads/";
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
