@@ -1,37 +1,5 @@
-<style>
-  .slider-container {
-  position: relative;
-  width: 100%;
-  height: 400px; /* container ki height fix karo */
-  overflow: hidden;
-}
-
-.slider-item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 1s ease-in-out; /* smooth fade */
-}
-
-.slider-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* image ko fit karne ke liye */
-  display: block;
-}
-
-.slider-item.active {
-  opacity: 1;
-  z-index: 1;
-}
-
-</style>
-
 <?php
-$query = "SELECT * FROM banners";
+$query = "SELECT * FROM banners WHERE status = 'active' ORDER BY id DESC";
 $result = mysqli_query($conn, $query);
 $first = true;
 ?>
@@ -42,22 +10,22 @@ $first = true;
 
       <?php while ($row = mysqli_fetch_assoc($result)) { ?>
         <div class="slider-item <?php echo $first ? 'active' : ''; ?>">
-          <img src="images/banners/<?php echo $row['image']; ?>" class="banner-img" alt="banner">
+          <img src="images/banners/<?php echo htmlspecialchars($row['image'], ENT_QUOTES, 'UTF-8'); ?>" class="banner-img" alt="<?php echo htmlspecialchars($row['title'] ?: 'SlayMart promotion', ENT_QUOTES, 'UTF-8'); ?>">
           
           <div class="banner-content">
   <?php if (!empty($row['subtitle'])) { ?>
-    <p class="banner-subtitle"><?php echo $row['subtitle']; ?></p>
+    <p class="banner-subtitle"><?php echo htmlspecialchars($row['subtitle'], ENT_QUOTES, 'UTF-8'); ?></p>
   <?php } ?>
   
   <?php if (!empty($row['title'])) { ?>
-    <h2 class="banner-title"><?php echo $row['title']; ?></h2>
+    <h2 class="banner-title"><?php echo htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8'); ?></h2>
   <?php } ?>
   
   <?php if (!empty($row['price'])) { ?>
-    <p class="banner-text">starting at <b><?php echo $row['price']; ?></b></p>
+    <p class="banner-text">starting at <b>PKR <?php echo number_format((float) $row['price']); ?></b></p>
   <?php } ?>
   
-  <a href="" class="banner-btn">Shop now</a>
+  <a href="#product-list" class="banner-btn">Shop now</a>
 </div>
         </div>
       <?php $first = false; } ?>
@@ -76,13 +44,12 @@ $first = true;
     sliderItems[index].classList.add("active");
   }
 
-  // Show first slide
-  showSlide(currentIndex);
-
-  // Auto change every 10 sec
-  setInterval(() => {
-    currentIndex = (currentIndex + 1) % sliderItems.length;
+  if (sliderItems.length) {
     showSlide(currentIndex);
-  }, 10000);
+    if (sliderItems.length > 1) setInterval(() => {
+      currentIndex = (currentIndex + 1) % sliderItems.length;
+      showSlide(currentIndex);
+    }, 7000);
+  }
 </script>
 

@@ -225,7 +225,7 @@
 
             <?php if (isset($_SESSION['user_id'])) : ?>
               <!-- Logged In -->
-              <span class="welcome-text">👋 Welcome, <b><?= $_SESSION['user_name']; ?></b></span>
+              <span class="welcome-text">👋 Welcome, <b><?= htmlspecialchars($_SESSION['user_name'], ENT_QUOTES, 'UTF-8'); ?></b></span>
               <a href="./users/logout.php" class="auth-btn logout-btn">Logout</a>
 
             <?php else : ?>

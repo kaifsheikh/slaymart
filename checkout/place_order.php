@@ -22,24 +22,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $phone            = trim($_POST['phone'] ?? '');
     $address          = trim($_POST['address'] ?? '');
     $quantity         = max(1, (int)($_POST['quantity'] ?? 1));
-    $price            = (float)($_POST['price'] ?? 0);
+    // Prices and product type are always loaded from the database below; hidden form fields are not trusted.
+    $price            = 0.0;
     $payment_method   = trim($_POST['payment_method'] ?? 'COD');
     $note             = trim($_POST['note'] ?? '');
     $delivery_type    = trim($_POST['delivery_type'] ?? 'Standard');
-    $delivery_charges = (float)($_POST['delivery_charges'] ?? 250);
+    $delivery_charges = 0.0;
     $selected_image   = trim($_POST['selected_image'] ?? '');
-    $product_type     = trim($_POST['product_type'] ?? '');
+    $product_type     = '';
 
-    // Get color and size for exclusive products
-    $color_id = ($product_type === 'exclusive') ? (int)($_POST['color_id'] ?? 0) : 0;
-    $size_id = ($product_type === 'exclusive') ? (int)($_POST['size_id'] ?? 0) : 0;
+    $color_id = (int)($_POST['color_id'] ?? 0);
+    $size_id = (int)($_POST['size_id'] ?? 0);
 
     // Fetch product name and image from product_images table
     if ($product_id > 0) {
-        $stmt = $conn->prepare("SELECT p.name, pi.image, p.stock_status 
-                               FROM products p 
-                               LEFT JOIN product_images pi ON p.id = pi.product_id 
-                               WHERE p.id = ?");
+        $stmt = $conn->prepare("SELECT id, name, price, discount, type, stock_status FROM products WHERE id = ? LIMIT 1");
         $stmt->bind_param("i", $product_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -47,15 +44,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $row = $result->fetch_assoc();
             $product_name = $row['name'];
             $stock_status = $row['stock_status'];
-            // Use selected image if available, otherwise use product image
-            $selected_image = !empty($selected_image) ? $selected_image : ($row['image'] ?? '');
+            $product_type = $row['type'];
+            $discount = min(100, max(0, (float) $row['discount']));
+            $price = max(0, (float) $row['price'] * (1 - $discount / 100));
         }
         $stmt->close();
     }
 
-    // If no image is available, use placeholder
-    if (empty($selected_image)) {
-        $selected_image = 'placeholder.png';
+    if (!isset($row) || !$row) $errors[] = 'This product is no longer available.';
+    if (($stock_status ?? 'out') !== 'in') $errors[] = 'This product is currently out of stock.';
+
+    $allowedDelivery = ['Standard' => 250.0, 'Fast' => 500.0];
+    if (!array_key_exists($delivery_type, $allowedDelivery)) {
+        $errors[] = 'Please select a valid delivery option.';
+    } else {
+        $delivery_charges = $allowedDelivery[$delivery_type];
+    }
+
+    // Verify that the selected product image actually belongs to this product.
+    $imageStmt = $conn->prepare('SELECT image FROM product_images WHERE product_id = ? AND image = ? LIMIT 1');
+    $imageStmt->bind_param('is', $product_id, $selected_image);
+    $imageStmt->execute();
+    $validImage = $imageStmt->get_result()->fetch_assoc();
+    $imageStmt->close();
+    if (!$validImage) {
+        $fallbackStmt = $conn->prepare('SELECT image FROM product_images WHERE product_id = ? ORDER BY id ASC LIMIT 1');
+        $fallbackStmt->bind_param('i', $product_id);
+        $fallbackStmt->execute();
+        $fallback = $fallbackStmt->get_result()->fetch_assoc();
+        $fallbackStmt->close();
+        $selected_image = $fallback['image'] ?? 'placeholder.png';
     }
 
     // Calculate totals
@@ -64,16 +82,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // ✅ Validation
     if ($fullname === '') $errors[] = "Full Name is required.";
-    if ($email === '') $errors[] = "Email is required.";
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "A valid email is required.";
     if ($phone === '') $errors[] = "Phone Number is required.";
     if ($address === '') $errors[] = "Address is required.";
     if ($payment_method === '') $errors[] = "Payment method is required.";
     if ($delivery_type === '') $errors[] = "Delivery type is required.";
+    if ($quantity > 20) $errors[] = "A maximum of 20 items can be ordered at once.";
+    if (!in_array($payment_method, ['COD', 'EasyPaisa', 'Bank Transfer'], true)) $errors[] = "Please select a valid payment method.";
 
     // Additional validation for exclusive products
     if ($product_type === 'exclusive') {
         if ($color_id <= 0) $errors[] = "Color selection is required for exclusive products.";
         if ($size_id <= 0) $errors[] = "Size selection is required for exclusive products.";
+        $variantStmt = $conn->prepare('SELECT (SELECT COUNT(*) FROM product_colors WHERE product_id = ? AND color_id = ?) AS valid_color, (SELECT COUNT(*) FROM product_sizes WHERE product_id = ? AND size_id = ?) AS valid_size');
+        $variantStmt->bind_param('iiii', $product_id, $color_id, $product_id, $size_id);
+        $variantStmt->execute();
+        $variant = $variantStmt->get_result()->fetch_assoc();
+        $variantStmt->close();
+        if (!$variant || !(int) $variant['valid_color'] || !(int) $variant['valid_size']) $errors[] = 'Please select valid product options.';
+    } else {
+        $color_id = 0;
+        $size_id = 0;
     }
 
     // ✅ Process order if no errors
@@ -91,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 // Bind params → types: i (int), s (string), d (double/float)
                 $stmt->bind_param(
-                    "iissssisssssdii",
+                    "iissssidssssdii",
                     $product_id,
                     $user_id,
                     $fullname,
@@ -112,12 +141,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 if ($stmt->execute()) {
                     $order_id = $stmt->insert_id;
                     $stmt->close();
-
-                    if ($row['stock_status'] === 'in') {
-                        echo "<span class='badge bg-success'>In Stock</span>";
-                    } else {
-                        echo "<span class='badge bg-danger'>Out of Stock</span>";
-                    }
 
                     $conn->commit();
 

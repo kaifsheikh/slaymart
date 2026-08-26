@@ -2,6 +2,10 @@
 include "../config/db.php";
 $errors = [];
 $success = "";
+$redirect = $_GET['redirect'] ?? $_POST['redirect'] ?? '../index.php';
+if (!is_string($redirect) || !preg_match('#^(?:checkout\.php\?id=\d+|\.\./index\.php)$#', $redirect)) {
+    $redirect = '../index.php';
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
@@ -37,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
-                header("Location: ../index.php");
+                header("Location: " . $redirect);
                 exit;
             } else {
                 $errors[] = "Incorrect password. Please try again.";
@@ -451,6 +455,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             
             <form method="POST" action="" id="loginForm">
+                <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect, ENT_QUOTES, 'UTF-8') ?>">
                 <!-- Error Messages -->
                 <?php if (!empty($errors)) : ?>
                     <div class="error-container">

@@ -32,6 +32,10 @@ $stmt->close();
 if (!$product) {
   die("Product not found.");
 }
+if ($product['stock_status'] !== 'in') {
+  header('Location: ../product-detail/index.php?id=' . $product_id);
+  exit();
+}
 // ✅ Normalize values
 $price = (float)($product['price'] ?? 0.0);
 $discount = (float)($product['discount'] ?? 0.0);
@@ -716,7 +720,7 @@ $initial_total = $unit_price + $default_delivery;
       <!-- hidden pricing fields -->
       <input type="hidden" name="product_id" value="<?= (int)$product_id ?>">
       <input type="hidden" id="unitPrice" value="<?= htmlspecialchars($unit_price, ENT_QUOTES) ?>">
-      <input type="hidden" id="priceField" name="price" value="<?= htmlspecialchars($initial_total, ENT_QUOTES) ?>">
+      <input type="hidden" id="priceField" name="price" value="<?= htmlspecialchars($unit_price, ENT_QUOTES) ?>">
       <input type="hidden" id="deliveryChargesField" name="delivery_charges" value="<?= $default_delivery ?>">
       <input type="hidden" id="delivery_type" name="delivery_type" value="Standard">
       <input type="hidden" name="selected_image" id="selectedImage" value="<?= htmlspecialchars($images[0]) ?>">
